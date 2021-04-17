@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "825317093172",
+    "project_id": "mickle-pay",
+    "storage_bucket": "mickle-pay.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825317093172:android:e8dbc90d6b32a72022ff61",
+        "android_client_info": {
+          "package_name": "com.mickleentityltdnigeria.mickle_pay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825317093172-cb29ga07nml288qiifsn8v3v651fgueg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc6ljloqjU4dPVi5Iu553ekScREgryZgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825317093172-cb29ga07nml288qiifsn8v3v651fgueg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
