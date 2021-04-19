@@ -7,41 +7,37 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @IgnoreExtraProperties
-public class Exchange  implements Serializable {
+public class SendMoney implements Serializable {
 
     public String ID;
     public Timestamp timestamp;
     public String authID;
     public String customerIP;
     public String customerID;
-    public String exchangeDesc;
+    public String transactionDesc;
     public String debitWalletID;
     public String debitWalletCurrency;
     public double debitAmount;
-    public double exchangeRate;
     public String creditWalletID;
     public String creditWalletCurrency;
     public double creditAmount;
-    public double exchangeGained;
 
-    public Exchange() {
+    public SendMoney() {
     }
 
-    public Exchange(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String exchangeDesc, String debitWalletID, String debitWalletCurrency, double debitAmount, double exchangeRate, String creditWalletID, String creditWalletCurrency, double creditAmount, double exchangeGained) {
+    public SendMoney(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String transactionDesc, String debitWalletID, String debitWalletCurrency, double debitAmount, String creditWalletID, String creditWalletCurrency, double creditAmount) {
         this.ID = ID;
         this.timestamp = timestamp;
         this.authID = authID;
         this.customerIP = customerIP;
         this.customerID = customerID;
-        this.exchangeDesc = exchangeDesc;
+        this.transactionDesc = transactionDesc;
         this.debitWalletID = debitWalletID;
         this.debitWalletCurrency = debitWalletCurrency;
         this.debitAmount = debitAmount;
-        this.exchangeRate = exchangeRate;
         this.creditWalletID = creditWalletID;
         this.creditWalletCurrency = creditWalletCurrency;
         this.creditAmount = creditAmount;
-        this.exchangeGained = exchangeGained;
     }
 
     @Exclude
@@ -95,13 +91,13 @@ public class Exchange  implements Serializable {
     }
 
     @Exclude
-    public String getExchangeDesc() {
-        return exchangeDesc;
+    public String getTransactionDesc() {
+        return transactionDesc;
     }
 
     @Exclude
-    public void setExchangeDesc(String exchangeDesc) {
-        this.exchangeDesc = exchangeDesc;
+    public void setTransactionDesc(String transactionDesc) {
+        this.transactionDesc = transactionDesc;
     }
 
     @Exclude
@@ -135,16 +131,6 @@ public class Exchange  implements Serializable {
     }
 
     @Exclude
-    public double getExchangeRate() {
-        return exchangeRate;
-    }
-
-    @Exclude
-    public void setExchangeRate(double exchangeRate) {
-        this.exchangeRate = exchangeRate;
-    }
-
-    @Exclude
     public String getCreditWalletID() {
         return creditWalletID;
     }
@@ -172,35 +158,5 @@ public class Exchange  implements Serializable {
     @Exclude
     public void setCreditAmount(double creditAmount) {
         this.creditAmount = creditAmount;
-    }
-
-    @Exclude
-    public double getExchangeGained() {
-        return exchangeGained;
-    }
-
-    @Exclude
-    public void setExchangeGained(double exchangeGained) {
-        this.exchangeGained = exchangeGained;
-    }
-
-    @Exclude
-    @Override
-    public String toString() {
-        return "Exchange{" +
-                "ID='" + ID + '\'' +
-                ", timestamp=" + timestamp +
-                ", authID='" + authID + '\'' +
-                ", userIP='" + customerIP + '\'' +
-                ", userID='" + customerID + '\'' +
-                ", exchangeDesc='" + exchangeDesc + '\'' +
-                ", debitWalletID='" + debitWalletID + '\'' +
-                ", debitWalletCurrency='" + debitWalletCurrency + '\'' +
-                ", debitAmount=" + debitAmount +
-                ", exchangeRate=" + exchangeRate +
-                ", creditWalletID='" + creditWalletID + '\'' +
-                ", creditWalletCurrency='" + creditWalletCurrency + '\'' +
-                ", creditAmount=" + creditAmount +
-                '}';
     }
 }

@@ -2,6 +2,7 @@ package com.mickleentityltdnigeria.mickle_pay.data.model;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.annotations.Nullable;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -16,13 +17,14 @@ public class WalletTransactions  implements Serializable {
     public String userID;
     public String transactDesc;
     public double transactAmount;
-    public String transactType;
-    public String beneficiaryWalletID;
+    public String transactionType;
+    public String transactionID;
+    public String beneficiaryWalletID; //@Nullable
 
     public WalletTransactions() {
     }
 
-    public WalletTransactions(Timestamp timestamp, String walletID, String authID, String userIP, String userID, String transactDesc, double transactAmount, String transactType, String beneficiaryWalletID) {
+    public WalletTransactions(Timestamp timestamp, String walletID, String authID, String userIP, String userID, String transactDesc, double transactAmount, String transactionType, String transactionID, String beneficiaryWalletID) {
         this.timestamp = timestamp;
         this.walletID = walletID;
         this.authID = authID;
@@ -30,7 +32,8 @@ public class WalletTransactions  implements Serializable {
         this.userID = userID;
         this.transactDesc = transactDesc;
         this.transactAmount = transactAmount;
-        this.transactType = transactType;
+        this.transactionType = transactionType;
+        this.transactionID = transactionID;
         this.beneficiaryWalletID = beneficiaryWalletID;
     }
 
@@ -105,13 +108,23 @@ public class WalletTransactions  implements Serializable {
     }
 
     @Exclude
-    public String getTransactType() {
-        return transactType;
+    public String getTransactionType() {
+        return transactionType;
     }
 
     @Exclude
-    public void setTransactType(String transactType) {
-        this.transactType = transactType;
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    @Exclude
+    public String getTransactionID() {
+        return transactionID;
+    }
+
+    @Exclude
+    public void setTransactionID(String transactionID) {
+        this.transactionID = transactionID;
     }
 
     @Exclude

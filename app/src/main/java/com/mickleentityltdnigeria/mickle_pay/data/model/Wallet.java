@@ -12,8 +12,8 @@ public class Wallet implements Serializable {
 
     public String ID;
     public Timestamp timestamp;
+    public String customerID;
     public String walletID;
-    public String walletOwnerID;
     public String walletCurrency;
     public double walletBalance;
     public Map<Timestamp, WalletTransactions> walletTransactions;
@@ -21,11 +21,11 @@ public class Wallet implements Serializable {
     public Wallet() {
     }
 
-    public Wallet(String ID, Timestamp timestamp, String walletID, String walletOwnerID, String walletCurrency, double walletBalance, Map<Timestamp, WalletTransactions> walletTransactions) {
+    public Wallet(String ID, Timestamp timestamp, String walletID, String customerID, String walletCurrency, double walletBalance, Map<Timestamp, WalletTransactions> walletTransactions) {
         this.ID = ID;
         this.timestamp = timestamp;
         this.walletID = walletID;
-        this.walletOwnerID = walletOwnerID;
+        this.customerID = customerID;
         this.walletCurrency = walletCurrency;
         this.walletBalance = walletBalance;
         this.walletTransactions = walletTransactions;
@@ -62,13 +62,13 @@ public class Wallet implements Serializable {
     }
 
     @Exclude
-    public String getWalletOwnerID() {
-        return walletOwnerID;
+    public String getCustomerID() {
+        return customerID;
     }
 
     @Exclude
-    public void setWalletOwnerID(String walletOwnerID) {
-        this.walletOwnerID = walletOwnerID;
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
     @Exclude
