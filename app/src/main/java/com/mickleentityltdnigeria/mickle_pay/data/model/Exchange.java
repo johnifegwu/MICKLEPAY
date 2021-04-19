@@ -5,6 +5,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Map;
+import java.util.Objects;
 
 @IgnoreExtraProperties
 public class Exchange  implements Serializable {
@@ -42,6 +44,26 @@ public class Exchange  implements Serializable {
         this.creditWalletCurrency = creditWalletCurrency;
         this.creditAmount = creditAmount;
         this.exchangeGained = exchangeGained;
+    }
+
+    @Exclude
+    public static double calcExchangeGained(String fromCurrency, double exchangeValue, String toCurrency, Map<String, ExchangeRate> exchangeRates){
+        ExchangeRate fromX = exchangeRates.get(fromCurrency);
+        assert fromX != null;
+        double newValue = (Objects.requireNonNull(fromX.exchangeRate.get(toCurrency)).exchangeRate * exchangeValue);
+
+        ExchangeRate toX = exchangeRates.get(toCurrency);
+        assert toX != null;
+        double newValue2 = (Objects.requireNonNull(toX.exchangeRate.get(fromCurrency)).exchangeRate * newValue);
+
+        return (exchangeValue - newValue2);
+    }
+
+    @Exclude
+    public static double calcExchangeValue(String fromCurrency, double exchangeValue, String toCurrency, Map<String, ExchangeRate> exchangeRates){
+        ExchangeRate fromX = exchangeRates.get(fromCurrency);
+        assert fromX != null;
+        return  (Objects.requireNonNull(fromX.exchangeRate.get(toCurrency)).exchangeRate * exchangeValue);
     }
 
     @Exclude
