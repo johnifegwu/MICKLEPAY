@@ -46,24 +46,24 @@ public class Exchange  implements Serializable {
         this.exchangeGained = exchangeGained;
     }
 
-    @Exclude
-    public static double calcExchangeGained(String fromCurrency, double exchangeValue, String toCurrency, Map<String, ExchangeRate> exchangeRates){
-        ExchangeRate fromX = exchangeRates.get(fromCurrency);
+    @Exclude //returns the exchanged gained
+    public static double calcExchangeGained(String debitCurrency, double debitValue, String creditCurrency, Map<String, ExchangeRate> exchangeRates){
+        ExchangeRate fromX = exchangeRates.get(debitCurrency);
         assert fromX != null;
-        double newValue = (Objects.requireNonNull(fromX.exchangeRate.get(toCurrency)).exchangeRate * exchangeValue);
+        double newValue = (Objects.requireNonNull(fromX.exchangeRate.get(creditCurrency)).exchangeRate * debitValue);
 
-        ExchangeRate toX = exchangeRates.get(toCurrency);
+        ExchangeRate toX = exchangeRates.get(creditCurrency);
         assert toX != null;
-        double newValue2 = (Objects.requireNonNull(toX.exchangeRate.get(fromCurrency)).exchangeRate * newValue);
+        double newValue2 = (Objects.requireNonNull(toX.exchangeRate.get(debitCurrency)).exchangeRate * newValue);
 
-        return (exchangeValue - newValue2);
+        return (debitValue - newValue2);
     }
 
-    @Exclude
-    public static double calcExchangeValue(String fromCurrency, double exchangeValue, String toCurrency, Map<String, ExchangeRate> exchangeRates){
-        ExchangeRate fromX = exchangeRates.get(fromCurrency);
+    @Exclude //returns the exchanged value for crediting the credit wallet
+    public static double calcExchangeValue(String debitCurrency, double debitValue, String creditCurrency, Map<String, ExchangeRate> exchangeRates){
+        ExchangeRate fromX = exchangeRates.get(debitCurrency);
         assert fromX != null;
-        return  (Objects.requireNonNull(fromX.exchangeRate.get(toCurrency)).exchangeRate * exchangeValue);
+        return  (Objects.requireNonNull(fromX.exchangeRate.get(creditCurrency)).exchangeRate * debitValue);
     }
 
     @Exclude

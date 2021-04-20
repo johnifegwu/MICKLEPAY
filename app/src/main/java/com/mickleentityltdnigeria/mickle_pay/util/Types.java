@@ -4,6 +4,7 @@ public class Types {
 
     private final static String CARD_DEPOSIT = "CARD_DEPOSIT";
     private final static String BANK_DEPOSIT = "BANK_DEPOSIT";
+    private final static String INTERNAL_DEPOSIT = "INTERNAL_DEPOSIT";
     private final static String MERCHANT_PAYMENT = "MERCHANT_PAYMENT";
     private final static String SEND_MONEY = "SEND_MONEY";
     private final static String EXCHANGE = "EXCHANGE";
@@ -15,6 +16,10 @@ public class Types {
 
     public static String BANK_DEPOSIT(){
         return BANK_DEPOSIT;
+    }
+
+    public static String INTERNAL_DEPOSIT(){
+        return INTERNAL_DEPOSIT;
     }
 
     public static String MERCHANT_PAYMENT(){
@@ -87,7 +92,7 @@ public class Types {
 
     }
 
-    public static class TransactionStatus {
+    public static class TransactStatus {
 
         private final static String APPROVED = "APPROVED";
         private final static String CANCELED = "CANCELED";

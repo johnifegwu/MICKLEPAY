@@ -2,7 +2,6 @@ package com.mickleentityltdnigeria.mickle_pay.data.model;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.google.firebase.database.annotations.Nullable;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -13,8 +12,8 @@ public class WalletTransactions  implements Serializable {
     public Timestamp timestamp;
     public String walletID;
     public String authID;
-    public String userIP;
-    public String userID;
+    public String customerIP;
+    public String customerID;
     public String transactDesc;
     public double transactAmount;
     public String transactionType;
@@ -24,12 +23,12 @@ public class WalletTransactions  implements Serializable {
     public WalletTransactions() {
     }
 
-    public WalletTransactions(Timestamp timestamp, String walletID, String authID, String userIP, String userID, String transactDesc, double transactAmount, String transactionType, String transactionID, String beneficiaryWalletID) {
+    public WalletTransactions(Timestamp timestamp, String walletID, String authID, String customerIP, String customerID, String transactDesc, double transactAmount, String transactionType, String transactionID, String beneficiaryWalletID) {
         this.timestamp = timestamp;
         this.walletID = walletID;
         this.authID = authID;
-        this.userIP = userIP;
-        this.userID = userID;
+        this.customerIP = customerIP;
+        this.customerID = customerID;
         this.transactDesc = transactDesc;
         this.transactAmount = transactAmount;
         this.transactionType = transactionType;
@@ -68,23 +67,23 @@ public class WalletTransactions  implements Serializable {
     }
 
     @Exclude
-    public String getUserIP() {
-        return userIP;
+    public String getCustomerIP() {
+        return customerIP;
     }
 
     @Exclude
-    public void setUserIP(String userIP) {
-        this.userIP = userIP;
+    public void setCustomerIP(String customerIP) {
+        this.customerIP = customerIP;
     }
 
     @Exclude
-    public String getUserID() {
-        return userID;
+    public String getCustomerID() {
+        return customerID;
     }
 
     @Exclude
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
     @Exclude
