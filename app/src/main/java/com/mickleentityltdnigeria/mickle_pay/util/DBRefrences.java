@@ -6,6 +6,7 @@ public class DBRefrences {
     private final static String WALLET = "wallet";
     private final static String TRANSACTION_CHARGES = "transactionCharges";
     private final static String EXCHANGE = "exchange";
+    private final static String CARD_DEPOSITS = "cardDeposits";
 
     public static String SEND_MONEY(){
         return SEND_MONEY;
@@ -21,5 +22,9 @@ public class DBRefrences {
 
     public static String EXCHANGE(){
         return EXCHANGE;
+    }
+
+    public static String CARD_DEPOSITS(){
+        return CARD_DEPOSITS;
     }
 }
