@@ -11,9 +11,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.mickleentityltdnigeria.mickle_pay.dalc.events.SendMoneyEvents;
+import com.mickleentityltdnigeria.mickle_pay.dalc.events.ExchangeEvents;
 import com.mickleentityltdnigeria.mickle_pay.data.model.ChargeDefinition;
-import com.mickleentityltdnigeria.mickle_pay.data.model.SendMoney;
+import com.mickleentityltdnigeria.mickle_pay.data.model.Exchange;
+import com.mickleentityltdnigeria.mickle_pay.data.model.ExchangeRate;
 import com.mickleentityltdnigeria.mickle_pay.data.model.TransactionCharges;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
@@ -27,48 +28,53 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SendMoneyDalc {
+public class ExchangeDalc {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference sendMoneyDB = database.getReference(DBRefrences.SEND_MONEY());
+    DatabaseReference exchangeDB = database.getReference(DBRefrences.EXCHANGE());
     DatabaseReference walletDB = database.getReference(DBRefrences.WALLET());
     DatabaseReference transactionChargeDB = database.getReference(DBRefrences.TRANSACTION_CHARGES());
 
-    private SendMoneyEvents sendMoneyEvents;
+    private ExchangeEvents exchangeEvents;
 
-    public SendMoneyDalc(SendMoneyEvents sendMoneyEvents) {
-        this.sendMoneyEvents = sendMoneyEvents;
+    public ExchangeDalc(ExchangeEvents exchangeEvents) {
+        this.exchangeEvents = exchangeEvents;
     }
 
-    public void sendMoney(Wallet debitWallet, Wallet creditWallet, double transactValue, List<ChargeDefinition> charges, String authID, String customerIP) throws Exception {
+    public void ExchangeMoney(Wallet debitWallet, Wallet creditWallet, double transactValue, List<ChargeDefinition> charges, Map<String, ExchangeRate> exchangeRates, String authID, String customerIP) throws Exception {
         //Check currency code
-        if (!debitWallet.getWalletCurrency().equals(creditWallet.getWalletCurrency())) {
-            throw new Exception("The Wallet you are sending money to must be of the same Currency.");
+        if (debitWallet.getWalletCurrency().equals(creditWallet.getWalletCurrency())) {
+            throw new Exception("The Wallet you are sending money to must not be of the same Currency.");
         }
         //check ownership
-        if(debitWallet.getCustomerID().equals(creditWallet.getCustomerID())){
-            throw new Exception("You can not send money to your self.");
+        if(!debitWallet.getCustomerID().equals(creditWallet.getCustomerID())){
+            throw new Exception("You can only exchange money to your own WALLET.");
         }
         String debitWalletID = debitWallet.getWalletID();
         String creditWalletID = creditWallet.getWalletID();
+        //get exchanged value and gains
+        double exchangedValue = Exchange.calcExchangeValue(debitWallet.getWalletCurrency(),transactValue,creditWallet.getWalletCurrency(),exchangeRates);
+        double exchangeGained = Exchange.calcExchangeGained(debitWallet.getWalletCurrency(),transactValue,creditWallet.getWalletCurrency(),exchangeRates);
+        double exchangeRate = exchangeRates.get(debitWallet.getWalletCurrency()).getExchangeRates().get(creditWallet.getWalletCurrency()).getExchangeRate();
+        //
         double chargeValue = 0;
         for (ChargeDefinition c : charges) {
-            chargeValue += (transactValue * c.chargePercentage);
+            chargeValue += (exchangedValue * c.chargePercentage);
         }
         //perform debit transactions
         debitWallet.setWalletBalance(debitWallet.getWalletBalance() - transactValue);
         Map<Timestamp, WalletTransactions> map = new HashMap<>();
-        WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.SEND_MONEY(), -transactValue, Types.SEND_MONEY(), authID, creditWalletID);
+        WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.EXCHANGE(), -transactValue, Types.EXCHANGE(), authID, creditWalletID);
         map.put(new Timestamp(new Date().getTime()), wallTran);
         debitWallet.setWalletTransactions(map);
         //
         //perform credit transactions
-        creditWallet.setWalletBalance(creditWallet.getWalletBalance() + (transactValue - chargeValue));
+        creditWallet.setWalletBalance(creditWallet.getWalletBalance() + (exchangedValue - chargeValue));
         Map<Timestamp, WalletTransactions> map2 = new HashMap<>();
-        WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.INTERNAL_DEPOSIT(), transactValue, Types.INTERNAL_DEPOSIT(), authID, creditWalletID);
+        WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.EXCHANGE(), exchangedValue, Types.EXCHANGE(), authID, creditWalletID);
         map2.put(new Timestamp(new Date().getTime()), wallTran2);
         if (chargeValue < 0 || chargeValue > 0) {
-            WalletTransactions wallTran3 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_DEPOSIT(), -chargeValue, Types.ChargeType.CHARGE_ON_DEPOSIT(), authID, creditWalletID);
+            WalletTransactions wallTran3 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_EXCHANGE(), -chargeValue, Types.ChargeType.CHARGE_ON_EXCHANGE(), authID, creditWalletID);
             map2.put(new Timestamp(new Date().getTime()), wallTran3);
         }
         creditWallet.setWalletTransactions(map2);
@@ -86,7 +92,7 @@ public class SendMoneyDalc {
                                 debitWallet.setWalletBalance(wallet.getWalletBalance() - transactValue);
                                 debitWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.SEND_MONEY(), -transactValue, Types.SEND_MONEY(), authID, creditWalletID);
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.EXCHANGE(), -transactValue, Types.EXCHANGE(), authID, creditWalletID);
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 debitWallet.setWalletTransactions(map);
                             }
@@ -145,13 +151,13 @@ public class SendMoneyDalc {
                             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                 Wallet wallet = userSnapshot.getValue(Wallet.class);
                                 assert wallet != null;
-                                creditWallet.setWalletBalance(wallet.getWalletBalance() + (transactValue - finalChargeValue));
+                                creditWallet.setWalletBalance(wallet.getWalletBalance() + (exchangedValue - finalChargeValue));
                                 creditWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.INTERNAL_DEPOSIT(), transactValue, Types.INTERNAL_DEPOSIT(), authID, creditWalletID);
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.EXCHANGE(), exchangedValue, Types.EXCHANGE(), authID, creditWalletID);
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 if (finalChargeValue < 0 || finalChargeValue > 0) {
-                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_DEPOSIT(), -finalChargeValue, Types.ChargeType.CHARGE_ON_DEPOSIT(), authID, creditWalletID);
+                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_EXCHANGE(), -finalChargeValue, Types.ChargeType.CHARGE_ON_EXCHANGE(), authID, creditWalletID);
                                     map.put(new Timestamp(new Date().getTime()), wallTran2);
                                 }
                                 creditWallet.setWalletTransactions(map);
@@ -203,7 +209,7 @@ public class SendMoneyDalc {
         List<Wallet> result1 = new ArrayList<>();
         List<Wallet> result2 = new ArrayList<>();
         List<TransactionCharges> result3 =  new ArrayList<>();
-        List<SendMoney> result4 =  new ArrayList<>();
+        List<Exchange> result4 =  new ArrayList<>();
         //validate wallet balance.
         if(debitWallet.getWalletBalance() < 0){
             throw new Exception("You do not have enough money in your WALLET to perform this transaction.");
@@ -223,23 +229,23 @@ public class SendMoneyDalc {
                         //save charges
                         for(ChargeDefinition c: charges){
                             Timestamp ts = new Timestamp(new Date().getTime());
-                            TransactionCharges tr = new TransactionCharges("",ts, authID, customerIP,creditWallet.getCustomerID(),creditWalletID,transactValue,c.getChargeType(),c.getChargePercentage(), -(transactValue * c.chargePercentage));
+                            TransactionCharges tr = new TransactionCharges("",ts, authID, customerIP,creditWallet.getCustomerID(), creditWalletID, transactValue,c.getChargeType(), c.getChargePercentage(), -(exchangedValue * c.chargePercentage));
                             String ID = transactionChargeDB.push().getKey();
                             tr.setID(ID);
                             transactionChargeDB.child(ID).setValue(tr);
                             result3.add(tr);
                         }
-                        //save sendMoney
+                        //save Exchange
                         Timestamp ts = new Timestamp(new Date().getTime());
-                        SendMoney sendMoney = new SendMoney("",ts,authID,customerIP,debitWallet.getCustomerID(),Types.SEND_MONEY(),debitWalletID,debitWallet.getWalletCurrency(),-transactValue,creditWalletID,creditWallet.getWalletCurrency(),(transactValue - finalChargeValue));
-                        String ID = sendMoneyDB.push().getKey();
-                        sendMoney.setID(ID);
-                        sendMoneyDB.child(ID).setValue(sendMoney).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        Exchange exchange = new Exchange("",ts, authID, customerIP, debitWallet.getCustomerID(), "Exchange from "+ debitWallet.getWalletCurrency() + " to "+ creditWallet.getWalletCurrency(),debitWalletID, debitWallet.getWalletCurrency(), transactValue, exchangeRate, creditWalletID, creditWallet.getWalletCurrency(), exchangedValue, exchangeGained);
+                        String ID = exchangeDB.push().getKey();
+                        exchange.setID(ID);
+                        exchangeDB.child(ID).setValue(exchange).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 //raise event
-                                result4.add(sendMoney);
-                                sendMoneyEvents.onSendMoneySucceeded(result1, result2, result3, result4);
+                                result4.add(exchange);
+                                exchangeEvents.onExchangeSucceeded(result1, result2, result3, result4);
                             }
                         });
                     }
@@ -247,6 +253,4 @@ public class SendMoneyDalc {
             }
         });
     }
-
-
 }

@@ -5,7 +5,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
@@ -14,16 +13,16 @@ public class ExchangeRate implements Serializable {
     public Timestamp timestamp;
     public String createdBy;
     public String currencyCode;
-    public Map<String, Rate> exchangeRate;
+    public Map<String, Rate> exchangeRates;
 
     public ExchangeRate() {
     }
 
-    public ExchangeRate(Timestamp timestamp, String createdBy, String currencyCode, Map<String, Rate> exchangeRate) {
+    public ExchangeRate(Timestamp timestamp, String createdBy, String currencyCode, Map<String, Rate> exchangeRates) {
         this.timestamp = timestamp;
         this.createdBy = createdBy;
         this.currencyCode = currencyCode;
-        this.exchangeRate = exchangeRate;
+        this.exchangeRates = exchangeRates;
     }
 
     @Exclude
@@ -57,13 +56,13 @@ public class ExchangeRate implements Serializable {
     }
 
     @Exclude
-    public Map<String, Rate> getExchangeRate() {
-        return exchangeRate;
+    public Map<String, Rate> getExchangeRates() {
+        return exchangeRates;
     }
 
     @Exclude
-    public void setExchangeRate(Map<String, Rate> exchangeRate) {
-        this.exchangeRate = exchangeRate;
+    public void setExchangeRates(Map<String, Rate> exchangeRates) {
+        this.exchangeRates = exchangeRates;
     }
 
 }

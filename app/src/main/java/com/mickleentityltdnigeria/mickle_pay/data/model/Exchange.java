@@ -50,11 +50,11 @@ public class Exchange  implements Serializable {
     public static double calcExchangeGained(String debitCurrency, double debitValue, String creditCurrency, Map<String, ExchangeRate> exchangeRates){
         ExchangeRate fromX = exchangeRates.get(debitCurrency);
         assert fromX != null;
-        double newValue = (Objects.requireNonNull(fromX.exchangeRate.get(creditCurrency)).exchangeRate * debitValue);
+        double newValue = (Objects.requireNonNull(fromX.exchangeRates.get(creditCurrency)).exchangeRate * debitValue);
 
         ExchangeRate toX = exchangeRates.get(creditCurrency);
         assert toX != null;
-        double newValue2 = (Objects.requireNonNull(toX.exchangeRate.get(debitCurrency)).exchangeRate * newValue);
+        double newValue2 = (Objects.requireNonNull(toX.exchangeRates.get(debitCurrency)).exchangeRate * newValue);
 
         return (debitValue - newValue2);
     }
@@ -63,7 +63,7 @@ public class Exchange  implements Serializable {
     public static double calcExchangeValue(String debitCurrency, double debitValue, String creditCurrency, Map<String, ExchangeRate> exchangeRates){
         ExchangeRate fromX = exchangeRates.get(debitCurrency);
         assert fromX != null;
-        return  (Objects.requireNonNull(fromX.exchangeRate.get(creditCurrency)).exchangeRate * debitValue);
+        return  (Objects.requireNonNull(fromX.exchangeRates.get(creditCurrency)).exchangeRate * debitValue);
     }
 
     @Exclude
