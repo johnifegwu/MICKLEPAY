@@ -21,13 +21,15 @@ import java.util.List;
 
 public class WalletDalc {
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference walletDB = database.getReference(DBReferences.WALLET());
+    private FirebaseDatabase database;
+    private final DatabaseReference walletDB;
 
-    private WalletEvents walletEvents;
+    private final WalletEvents walletEvents;
 
     public WalletDalc(WalletEvents walletEvents) {
         this.walletEvents = walletEvents;
+        this.database = FirebaseDatabase.getInstance();
+        this.walletDB = database.getReference(DBReferences.WALLET());
     }
 
     public void addNewWallet(Wallet newWallet){

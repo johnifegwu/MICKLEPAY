@@ -32,16 +32,21 @@ import java.util.Objects;
 
 public class MerchantPaymentDalc {
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference merchantPaymentDB = database.getReference(DBReferences.MERCHANT_PAYMENTS());
-    DatabaseReference walletDB = database.getReference(DBReferences.WALLET());
-    DatabaseReference transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
-    DatabaseReference exchangeDB = database.getReference(DBReferences.EXCHANGE());
+    private FirebaseDatabase database;
+    private final DatabaseReference merchantPaymentDB;
+    private final DatabaseReference walletDB;
+    private final DatabaseReference transactionChargeDB;
+    private final DatabaseReference exchangeDB;
 
-    MerchantPaymentEvents merchantPaymentEvents;
+    private final MerchantPaymentEvents merchantPaymentEvents;
 
     public MerchantPaymentDalc(MerchantPaymentEvents merchantPaymentEvents) {
         this.merchantPaymentEvents = merchantPaymentEvents;
+        this.database = FirebaseDatabase.getInstance();
+        this.merchantPaymentDB = database.getReference(DBReferences.MERCHANT_PAYMENTS());
+        this.walletDB = database.getReference(DBReferences.WALLET());
+        this.transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
+        this.exchangeDB = database.getReference(DBReferences.EXCHANGE());
     }
 
     public void collectPayment(Wallet customerWallet, Wallet merchantWallet, Wallet subMerchantWallet, String transactionDesc, String transactionCurrency, double transactionTotal, double mainMerchantSubTotal, double subMerchantSubTotal, List<ChargeDefinition> charges, Map<String, ExchangeRate> exchangeRates, String authID, String merchantIP) throws Exception {
@@ -281,7 +286,7 @@ public class MerchantPaymentDalc {
                                         }
                                     });
                                 }else{
-                                    merchantPaymentEvents.onPaymentFailed( new Exception("You do not have enough money left in your WALLET to complete this transaction."));
+                                    merchantPaymentEvents.onPaymentFailed( new Exception("The Customer do not have enough money left in his/her WALLET to complete this transaction."));
                                 }
                                 break;
                             }

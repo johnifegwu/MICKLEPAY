@@ -30,15 +30,19 @@ import java.util.Objects;
 
 public class ExchangeDalc {
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference exchangeDB = database.getReference(DBReferences.EXCHANGE());
-    DatabaseReference walletDB = database.getReference(DBReferences.WALLET());
-    DatabaseReference transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
+    private FirebaseDatabase database;
+    private final DatabaseReference exchangeDB;
+    private final DatabaseReference walletDB;
+    private final DatabaseReference transactionChargeDB;
 
-    private ExchangeEvents exchangeEvents;
+    private final ExchangeEvents exchangeEvents;
 
     public ExchangeDalc(ExchangeEvents exchangeEvents) {
         this.exchangeEvents = exchangeEvents;
+        this.database = FirebaseDatabase.getInstance();
+        this.exchangeDB = database.getReference(DBReferences.EXCHANGE());
+        this.walletDB = database.getReference(DBReferences.WALLET());
+        this.transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
     }
 
     public void exchangeMoney(Wallet debitWallet, Wallet creditWallet, double transactValue, List<ChargeDefinition> charges, Map<String, ExchangeRate> exchangeRates, String authID, String customerIP) throws Exception {

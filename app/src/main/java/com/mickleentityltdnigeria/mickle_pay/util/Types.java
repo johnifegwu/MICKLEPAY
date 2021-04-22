@@ -140,6 +140,30 @@ public class Types {
             return CHARGE_ON_EXCHANGE;
         }
 
+    }
+
+    public static class userType{
+
+        private final static String ADMIN = "ADMIN";
+        private final static String CUSTOMER = "CUSTOMER";
+        private final static String MERCHANT = "MERCHANT";
+        private final static String SUB_MERCHANT = "SUB_MERCHANT";
+
+        public static String ADMIN(){
+            return ADMIN;
+        }
+
+        public static String CUSTOMER(){
+            return CUSTOMER;
+        }
+
+        public static String MERCHANT(){
+            return MERCHANT;
+        }
+
+        public static String SUB_MERCHANT(){
+            return SUB_MERCHANT;
+        }
 
     }
 

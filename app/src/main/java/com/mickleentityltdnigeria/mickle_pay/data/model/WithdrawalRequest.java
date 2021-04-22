@@ -22,6 +22,7 @@ public class WithdrawalRequest implements Serializable {
     public String debitWalletCurrency;
     public double debitAmount;
     public String bankAccountName;
+    public String bankAccountCurrency;
     public String bankAccountNumber_IBAN;
     public String bankAccountAddress;
     public String bankName;
@@ -35,7 +36,7 @@ public class WithdrawalRequest implements Serializable {
     public WithdrawalRequest() {
     }
 
-    public WithdrawalRequest(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, boolean isProcessed, Timestamp dateProcessed, String processedBy, String processStatus, String debitWalletID, String debitWalletCurrency, double debitAmount, String bankAccountName, String bankAccountNumber_IBAN, String bankAccountAddress, String bankName, String bankAddress, String bankSwiftCode, String intermediaryBankName, String intermediaryBankAddress, String intermediaryBankSwiftCode, String intermediaryBankAccountNumber_IBAN) {
+    public WithdrawalRequest(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, boolean isProcessed, Timestamp dateProcessed, String processedBy, String processStatus, String debitWalletID, String debitWalletCurrency, double debitAmount, String bankAccountName, String bankAccountCurrency, String bankAccountNumber_IBAN, String bankAccountAddress, String bankName, String bankAddress, String bankSwiftCode, String intermediaryBankName, String intermediaryBankAddress, String intermediaryBankSwiftCode, String intermediaryBankAccountNumber_IBAN) {
         this.ID = ID;
         this.timestamp = timestamp;
         this.authID = authID;
@@ -49,6 +50,7 @@ public class WithdrawalRequest implements Serializable {
         this.debitWalletCurrency = debitWalletCurrency;
         this.debitAmount = debitAmount;
         this.bankAccountName = bankAccountName;
+        this.bankAccountCurrency = bankAccountCurrency;
         this.bankAccountNumber_IBAN = bankAccountNumber_IBAN;
         this.bankAccountAddress = bankAccountAddress;
         this.bankName = bankName;
@@ -110,138 +112,182 @@ public class WithdrawalRequest implements Serializable {
         this.customerID = customerID;
     }
 
+    @Exclude
     public boolean isProcessed() {
         return isProcessed;
     }
 
+    @Exclude
     public void setProcessed(boolean processed) {
         isProcessed = processed;
     }
 
+    @Exclude
     public Timestamp getDateProcessed() {
         return dateProcessed;
     }
 
+    @Exclude
     public void setDateProcessed(Timestamp dateProcessed) {
         this.dateProcessed = dateProcessed;
     }
 
+    @Exclude
     public String getProcessedBy() {
         return processedBy;
     }
 
+    @Exclude
     public void setProcessedBy(String processedBy) {
         this.processedBy = processedBy;
     }
 
+    @Exclude
     public String getProcessStatus() {
         return processStatus;
     }
 
+    @Exclude
     public void setProcessStatus(String processStatus) {
         this.processStatus = processStatus;
     }
 
+    @Exclude
     public String getDebitWalletID() {
         return debitWalletID;
     }
 
+    @Exclude
     public void setDebitWalletID(String debitWalletID) {
         this.debitWalletID = debitWalletID;
     }
 
+    @Exclude
     public String getDebitWalletCurrency() {
         return debitWalletCurrency;
     }
 
+    @Exclude
     public void setDebitWalletCurrency(String debitWalletCurrency) {
         this.debitWalletCurrency = debitWalletCurrency;
     }
 
+    @Exclude
     public double getDebitAmount() {
         return debitAmount;
     }
 
+    @Exclude
     public void setDebitAmount(double debitAmount) {
         this.debitAmount = debitAmount;
     }
 
+    @Exclude
     public String getBankAccountName() {
         return bankAccountName;
     }
 
+    @Exclude
     public void setBankAccountName(String bankAccountName) {
         this.bankAccountName = bankAccountName;
     }
 
+    @Exclude
+    public String getBankAccountCurrency() {
+        return bankAccountCurrency;
+    }
+
+    @Exclude
+    public void setBankAccountCurrency(String bankAccountCurrency) {
+        this.bankAccountCurrency = bankAccountCurrency;
+    }
+
+    @Exclude
     public String getBankAccountNumber_IBAN() {
         return bankAccountNumber_IBAN;
     }
 
+    @Exclude
     public void setBankAccountNumber_IBAN(String bankAccountNumber_IBAN) {
         this.bankAccountNumber_IBAN = bankAccountNumber_IBAN;
     }
 
+    @Exclude
     public String getBankAccountAddress() {
         return bankAccountAddress;
     }
 
+    @Exclude
     public void setBankAccountAddress(String bankAccountAddress) {
         this.bankAccountAddress = bankAccountAddress;
     }
 
+    @Exclude
     public String getBankName() {
         return bankName;
     }
 
+    @Exclude
     public void setBankName(String bankName) {
         this.bankName = bankName;
     }
 
+    @Exclude
     public String getBankAddress() {
         return bankAddress;
     }
 
+    @Exclude
     public void setBankAddress(String bankAddress) {
         this.bankAddress = bankAddress;
     }
 
+    @Exclude
     public String getBankSwiftCode() {
         return bankSwiftCode;
     }
 
+    @Exclude
     public void setBankSwiftCode(String bankSwiftCode) {
         this.bankSwiftCode = bankSwiftCode;
     }
 
+    @Exclude
     public String getIntermediaryBankName() {
         return intermediaryBankName;
     }
 
+    @Exclude
     public void setIntermediaryBankName(String intermediaryBankName) {
         this.intermediaryBankName = intermediaryBankName;
     }
 
+    @Exclude
     public String getIntermediaryBankAddress() {
         return intermediaryBankAddress;
     }
 
+    @Exclude
     public void setIntermediaryBankAddress(String intermediaryBankAddress) {
         this.intermediaryBankAddress = intermediaryBankAddress;
     }
 
+    @Exclude
     public String getIntermediaryBankSwiftCode() {
         return intermediaryBankSwiftCode;
     }
 
+    @Exclude
     public void setIntermediaryBankSwiftCode(String intermediaryBankSwiftCode) {
         this.intermediaryBankSwiftCode = intermediaryBankSwiftCode;
     }
 
+    @Exclude
     public String getIntermediaryBankAccountNumber_IBAN() {
         return intermediaryBankAccountNumber_IBAN;
     }
 
+    @Exclude
     public void setIntermediaryBankAccountNumber_IBAN(String intermediaryBankAccountNumber_IBAN) {
         this.intermediaryBankAccountNumber_IBAN = intermediaryBankAccountNumber_IBAN;
     }

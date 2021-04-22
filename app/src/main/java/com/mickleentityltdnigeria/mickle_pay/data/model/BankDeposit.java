@@ -22,6 +22,7 @@ public class BankDeposit implements Serializable {
     public String creditWalletCurrency;
     public double creditAmount;
     public String bankAccountName;
+    public String bankAccountCurrency;
     public String bankAccountNumber_IBAN;
     public String bankAccountAddress;
     public String bankName;
@@ -36,7 +37,7 @@ public class BankDeposit implements Serializable {
     public BankDeposit() {
     }
 
-    public BankDeposit(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, boolean isProcessed, Timestamp dateProcessed, String processedBy, String processStatus, String creditWalletID, String creditWalletCurrency, double creditAmount, String bankAccountName, String bankAccountNumber_IBAN, String bankAccountAddress, String bankName, String bankAddress, String bankSwiftCode, String intermediaryBankName, String intermediaryBankAddress, String intermediaryBankSwiftCode, String intermediaryBankAccountNumber_IBAN) {
+    public BankDeposit(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, boolean isProcessed, Timestamp dateProcessed, String processedBy, String processStatus, String creditWalletID, String creditWalletCurrency, double creditAmount, String bankAccountName, String bankAccountCurrency, String bankAccountNumber_IBAN, String bankAccountAddress, String bankName, String bankAddress, String bankSwiftCode, String intermediaryBankName, String intermediaryBankAddress, String intermediaryBankSwiftCode, String intermediaryBankAccountNumber_IBAN) {
         this.ID = ID;
         this.timestamp = timestamp;
         this.authID = authID;
@@ -50,6 +51,7 @@ public class BankDeposit implements Serializable {
         this.creditWalletCurrency = creditWalletCurrency;
         this.creditAmount = creditAmount;
         this.bankAccountName = bankAccountName;
+        this.bankAccountCurrency = bankAccountCurrency;
         this.bankAccountNumber_IBAN = bankAccountNumber_IBAN;
         this.bankAccountAddress = bankAccountAddress;
         this.bankName = bankName;
@@ -191,6 +193,16 @@ public class BankDeposit implements Serializable {
     @Exclude
     public void setBankAccountName(String bankAccountName) {
         this.bankAccountName = bankAccountName;
+    }
+
+    @Exclude
+    public String getBankAccountCurrency() {
+        return bankAccountCurrency;
+    }
+
+    @Exclude
+    public void setBankAccountCurrency(String bankAccountCurrency) {
+        this.bankAccountCurrency = bankAccountCurrency;
     }
 
     @Exclude

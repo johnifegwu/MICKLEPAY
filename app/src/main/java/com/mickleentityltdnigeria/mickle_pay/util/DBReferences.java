@@ -10,9 +10,24 @@ public class DBReferences {
     private final static String CHARGE_DEFINITION = "chargeDefinitions";
     private final static String EXCHANGE_RATES = "exchangeRates";
     private final static String MERCHANT_PAYMENTS = "merchantPayments";
+    private final static String COUNTRIES = "countries";
+    private final static String BANK_DEPOSITS = "bankDeposits";
+    private final static String WITHDRAWAL_REQUEST = "withdrawalRequests";
 
     public static String SEND_MONEY(){
         return SEND_MONEY;
+    }
+
+    public static String BANK_DEPOSITS(){
+        return BANK_DEPOSITS;
+    }
+
+    public static String WITHDRAWAL_REQUEST(){
+        return WITHDRAWAL_REQUEST;
+    }
+
+    public static String COUNTRIES(){
+        return COUNTRIES;
     }
 
     public static String WALLET(){

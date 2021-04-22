@@ -18,13 +18,15 @@ import java.util.List;
 
 public class ChargeDefinitionDalc {
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference chargeDefinitionDB = database.getReference(DBReferences.CHARGE_DEFINITION());
+    private FirebaseDatabase database;
+    private DatabaseReference chargeDefinitionDB;
 
     private ChargeDefinitionEvents chargeDefinitionEvents;
 
     public ChargeDefinitionDalc(ChargeDefinitionEvents chargeDefinitionEvents) {
         this.chargeDefinitionEvents = chargeDefinitionEvents;
+        this.database = FirebaseDatabase.getInstance();
+        this.chargeDefinitionDB = database.getReference(DBReferences.CHARGE_DEFINITION());
     }
 
     public void addChargeDefinition(ChargeDefinition chargeDefinition){

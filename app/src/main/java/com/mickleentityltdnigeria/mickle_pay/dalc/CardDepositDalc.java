@@ -28,15 +28,19 @@ import java.util.Map;
 
 public class CardDepositDalc {
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference cardDepositDB = database.getReference(DBReferences.CARD_DEPOSITS());
-    DatabaseReference walletDB = database.getReference(DBReferences.WALLET());
-    DatabaseReference transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
+    private FirebaseDatabase database;
+    private final DatabaseReference cardDepositDB;
+    private final DatabaseReference walletDB;
+    private final DatabaseReference transactionChargeDB;
 
-    CardDepositEvent cardDepositEvent;
+    private final CardDepositEvent cardDepositEvent;
 
     public CardDepositDalc(CardDepositEvent cardDepositEvent) {
         this.cardDepositEvent = cardDepositEvent;
+        this.database = FirebaseDatabase.getInstance();
+        this.cardDepositDB = database.getReference(DBReferences.CARD_DEPOSITS());
+        this.walletDB = database.getReference(DBReferences.WALLET());
+        this.transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
     }
 
     public void cardDeposit(CardDeposit cardDeposit, List<ChargeDefinition> charges){

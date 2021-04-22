@@ -28,15 +28,19 @@ import java.util.Map;
 
 public class SendMoneyDalc {
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference sendMoneyDB = database.getReference(DBReferences.SEND_MONEY());
-    DatabaseReference walletDB = database.getReference(DBReferences.WALLET());
-    DatabaseReference transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
+    private FirebaseDatabase database;
+    private final DatabaseReference sendMoneyDB;
+    private final DatabaseReference walletDB;
+    private final DatabaseReference transactionChargeDB;
 
-    private SendMoneyEvents sendMoneyEvents;
+    private final SendMoneyEvents sendMoneyEvents;
 
     public SendMoneyDalc(SendMoneyEvents sendMoneyEvents) {
         this.sendMoneyEvents = sendMoneyEvents;
+        this.database = FirebaseDatabase.getInstance();
+        this.sendMoneyDB = database.getReference(DBReferences.SEND_MONEY());
+        this.walletDB = database.getReference(DBReferences.WALLET());
+        this.transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
     }
 
     public void sendMoney(Wallet debitWallet, Wallet creditWallet, double transactValue, List<ChargeDefinition> charges, String authID, String customerIP) throws Exception {
