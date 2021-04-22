@@ -1,10 +1,9 @@
 package com.mickleentityltdnigeria.mickle_pay.dalc;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,7 +17,7 @@ import com.mickleentityltdnigeria.mickle_pay.data.model.ExchangeRate;
 import com.mickleentityltdnigeria.mickle_pay.data.model.TransactionCharges;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
-import com.mickleentityltdnigeria.mickle_pay.util.DBRefrences;
+import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
 import com.mickleentityltdnigeria.mickle_pay.util.Types;
 
 import java.sql.Timestamp;
@@ -32,9 +31,9 @@ import java.util.Objects;
 public class ExchangeDalc {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference exchangeDB = database.getReference(DBRefrences.EXCHANGE());
-    DatabaseReference walletDB = database.getReference(DBRefrences.WALLET());
-    DatabaseReference transactionChargeDB = database.getReference(DBRefrences.TRANSACTION_CHARGES());
+    DatabaseReference exchangeDB = database.getReference(DBReferences.EXCHANGE());
+    DatabaseReference walletDB = database.getReference(DBReferences.WALLET());
+    DatabaseReference transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
 
     private ExchangeEvents exchangeEvents;
 
@@ -48,25 +47,27 @@ public class ExchangeDalc {
             throw new Exception("The Wallet you are exchanging money to must not be of a different Currency.");
         }
         //check ownership
-        if(!debitWallet.getCustomerID().equals(creditWallet.getCustomerID())){
+        if (!debitWallet.getCustomerID().equals(creditWallet.getCustomerID())) {
             throw new Exception("You can only exchange money to your own WALLET.");
         }
         String debitWalletID = debitWallet.getWalletID();
         String creditWalletID = creditWallet.getWalletID();
         //get exchanged value and gains
-        double exchangedValue = Exchange.calcExchangeValue(debitWallet.getWalletCurrency(),transactValue,creditWallet.getWalletCurrency(),exchangeRates);
-        double exchangeGained = Exchange.calcExchangeGained(debitWallet.getWalletCurrency(),transactValue,creditWallet.getWalletCurrency(),exchangeRates);
-        double exchangeRate = Objects.requireNonNull(exchangeRates.get(debitWallet.getWalletCurrency())).getExchangeRates().get(creditWallet.getWalletCurrency()).getExchangeRate();
+        double exchangedValue = Exchange.calcExchangeValue(debitWallet.getWalletCurrency(), transactValue, creditWallet.getWalletCurrency(), exchangeRates);
+        double exchangeGained = Exchange.calcExchangeGained(debitWallet.getWalletCurrency(), transactValue, creditWallet.getWalletCurrency(), exchangeRates);
+        double exchangeRate = Objects.requireNonNull(Objects.requireNonNull(exchangeRates.get(debitWallet.getWalletCurrency())).getExchangeRates().get(creditWallet.getWalletCurrency())).getExchangeRate();
         //
         double chargeValue = 0;
         for (ChargeDefinition c : charges) {
-            chargeValue += (exchangedValue * c.chargePercentage);
+            if(!c.isDisabled()) {
+                chargeValue += (exchangedValue * c.getChargePercentage());
+            }
         }
         //save data
         List<Wallet> result1 = new ArrayList<>();
         List<Wallet> result2 = new ArrayList<>();
-        List<TransactionCharges> result3 =  new ArrayList<>();
-        List<Exchange> result4 =  new ArrayList<>();
+        List<TransactionCharges> result3 = new ArrayList<>();
+        List<Exchange> result4 = new ArrayList<>();
         //
         double finalChargeValue = chargeValue;
         ValueEventListener onDataChangedListener2 = new ValueEventListener() {
@@ -90,7 +91,7 @@ public class ExchangeDalc {
                                 }
                                 creditWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if(debitWallet.getWalletBalance() >= 0) {
+                                if (debitWallet.getWalletBalance() >= 0) {
                                     //save wallet to the system.
                                     walletDB.child(creditWalletID).setValue(creditWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -99,18 +100,22 @@ public class ExchangeDalc {
                                             result2.add(creditWallet);
                                             //save charges
                                             for (ChargeDefinition c : charges) {
-                                                Timestamp ts = new Timestamp(new Date().getTime());
-                                                TransactionCharges tr = new TransactionCharges("", ts, authID, customerIP, creditWallet.getCustomerID(), creditWalletID, transactValue, c.getChargeType(), c.getChargePercentage(), -(exchangedValue * c.chargePercentage));
-                                                String ID = transactionChargeDB.push().getKey();
-                                                tr.setID(ID);
-                                                transactionChargeDB.child(ID).setValue(tr);
-                                                result3.add(tr);
+                                                if(!c.isDisabled()) {
+                                                    Timestamp ts = new Timestamp(new Date().getTime());
+                                                    TransactionCharges tc = new TransactionCharges("", ts, authID, customerIP, creditWallet.getCustomerID(), creditWalletID, transactValue, c.getChargeType(), c.getChargePercentage(), -(exchangedValue * c.chargePercentage));
+                                                    String ID = transactionChargeDB.push().getKey();
+                                                    tc.setID(ID);
+                                                    assert ID != null;
+                                                    transactionChargeDB.child(ID).setValue(tc);
+                                                    result3.add(tc);
+                                                }
                                             }
                                             //save Exchange
                                             Timestamp ts = new Timestamp(new Date().getTime());
                                             Exchange exchange = new Exchange("", ts, authID, customerIP, debitWallet.getCustomerID(), "Exchange from " + debitWallet.getWalletCurrency() + " to " + creditWallet.getWalletCurrency(), debitWalletID, debitWallet.getWalletCurrency(), transactValue, exchangeRate, creditWalletID, creditWallet.getWalletCurrency(), exchangedValue, exchangeGained);
                                             String ID = exchangeDB.push().getKey();
                                             exchange.setID(ID);
+                                            assert ID != null;
                                             exchangeDB.child(ID).setValue(exchange).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
@@ -118,7 +123,17 @@ public class ExchangeDalc {
                                                     result4.add(exchange);
                                                     exchangeEvents.onExchangeSucceeded(result1, result2, result3, result4);
                                                 }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    exchangeEvents.onExchangeFailed(e);
+                                                }
                                             });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            exchangeEvents.onExchangeFailed(e);
                                         }
                                     });
                                 }
@@ -126,11 +141,14 @@ public class ExchangeDalc {
                             }
                         }
                     }
+                } else {
+                    exchangeEvents.onWalletDataNotFound(new Exception("Wallet data not found"));
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                exchangeEvents.onWalletDataNotFound(new Exception(error.getMessage()));
             }
         };
         ValueEventListener onDataChangedListener = new ValueEventListener() {
@@ -150,33 +168,43 @@ public class ExchangeDalc {
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 debitWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if(debitWallet.getWalletBalance() >= 0){
+                                if (debitWallet.getWalletBalance() >= 0) {
                                     //save wallet to the system.
                                     walletDB.child(debitWalletID).setValue(debitWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             //compile result
                                             result1.add(debitWallet);
-                                            Query query2 = FirebaseDatabase.getInstance().getReference(DBRefrences.WALLET())
+                                            Query query2 = FirebaseDatabase.getInstance().getReference(DBReferences.WALLET())
                                                     .orderByChild("walletID")
                                                     .equalTo(creditWalletID);
                                             query2.addListenerForSingleValueEvent(onDataChangedListener2);
                                         }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            exchangeEvents.onExchangeFailed(e);
+                                        }
                                     });
+                                } else {
+                                    exchangeEvents.onExchangeFailed(new Exception("You do not have enough money left in your WALLET to complete this transaction."));
                                 }
                                 break;
                             }
                         }
                     }
+                } else {
+                    exchangeEvents.onWalletDataNotFound(new Exception("Wallet data not found"));
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                exchangeEvents.onWalletDataNotFound(new Exception(error.getMessage()));
             }
         };
         //
-        Query query = FirebaseDatabase.getInstance().getReference(DBRefrences.WALLET())
+        Query query = FirebaseDatabase.getInstance().getReference(DBReferences.WALLET())
                 .orderByChild("walletID")
                 .equalTo(debitWalletID);
         query.addListenerForSingleValueEvent(onDataChangedListener);

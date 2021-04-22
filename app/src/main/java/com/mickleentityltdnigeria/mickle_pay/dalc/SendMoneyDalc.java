@@ -1,10 +1,9 @@
 package com.mickleentityltdnigeria.mickle_pay.dalc;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,7 +16,7 @@ import com.mickleentityltdnigeria.mickle_pay.data.model.SendMoney;
 import com.mickleentityltdnigeria.mickle_pay.data.model.TransactionCharges;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
-import com.mickleentityltdnigeria.mickle_pay.util.DBRefrences;
+import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
 import com.mickleentityltdnigeria.mickle_pay.util.Types;
 
 import java.sql.Timestamp;
@@ -30,9 +29,9 @@ import java.util.Map;
 public class SendMoneyDalc {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference sendMoneyDB = database.getReference(DBRefrences.SEND_MONEY());
-    DatabaseReference walletDB = database.getReference(DBRefrences.WALLET());
-    DatabaseReference transactionChargeDB = database.getReference(DBRefrences.TRANSACTION_CHARGES());
+    DatabaseReference sendMoneyDB = database.getReference(DBReferences.SEND_MONEY());
+    DatabaseReference walletDB = database.getReference(DBReferences.WALLET());
+    DatabaseReference transactionChargeDB = database.getReference(DBReferences.TRANSACTION_CHARGES());
 
     private SendMoneyEvents sendMoneyEvents;
 
@@ -53,7 +52,9 @@ public class SendMoneyDalc {
         String creditWalletID = creditWallet.getWalletID();
         double chargeValue = 0;
         for (ChargeDefinition c : charges) {
-            chargeValue += (transactValue * c.chargePercentage);
+            if(!c.isDisabled()) {
+                chargeValue += (transactValue * c.getChargePercentage());
+            }
         }
         //save data
         List<Wallet> result1 = new ArrayList<>();
@@ -92,18 +93,22 @@ public class SendMoneyDalc {
                                             result2.add(creditWallet);
                                             //save charges
                                             for(ChargeDefinition c: charges){
-                                                Timestamp ts = new Timestamp(new Date().getTime());
-                                                TransactionCharges tr = new TransactionCharges("",ts, authID, customerIP,creditWallet.getCustomerID(),creditWalletID,transactValue,c.getChargeType(),c.getChargePercentage(), -(transactValue * c.chargePercentage));
-                                                String ID = transactionChargeDB.push().getKey();
-                                                tr.setID(ID);
-                                                transactionChargeDB.child(ID).setValue(tr);
-                                                result3.add(tr);
+                                                if(!c.isDisabled()) {
+                                                    Timestamp ts = new Timestamp(new Date().getTime());
+                                                    TransactionCharges tc = new TransactionCharges("", ts, authID, customerIP, creditWallet.getCustomerID(), creditWalletID, transactValue, c.getChargeType(), c.getChargePercentage(), -(transactValue * c.chargePercentage));
+                                                    String ID = transactionChargeDB.push().getKey();
+                                                    tc.setID(ID);
+                                                    assert ID != null;
+                                                    transactionChargeDB.child(ID).setValue(tc);
+                                                    result3.add(tc);
+                                                }
                                             }
                                             //save sendMoney
                                             Timestamp ts = new Timestamp(new Date().getTime());
                                             SendMoney sendMoney = new SendMoney("",ts,authID,customerIP,debitWallet.getCustomerID(),Types.SEND_MONEY(),debitWalletID,debitWallet.getWalletCurrency(),-transactValue,creditWalletID,creditWallet.getWalletCurrency(),(transactValue - finalChargeValue));
                                             String ID = sendMoneyDB.push().getKey();
                                             sendMoney.setID(ID);
+                                            assert ID != null;
                                             sendMoneyDB.child(ID).setValue(sendMoney).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
@@ -111,7 +116,17 @@ public class SendMoneyDalc {
                                                     result4.add(sendMoney);
                                                     sendMoneyEvents.onSendMoneySucceeded(result1, result2, result3, result4);
                                                 }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    sendMoneyEvents.onSendMoneyFailed(e);
+                                                }
                                             });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            sendMoneyEvents.onSendMoneyFailed(e);
                                         }
                                     });
                                 }
@@ -119,11 +134,13 @@ public class SendMoneyDalc {
                             }
                         }
                     }
+                }else{
+                    sendMoneyEvents.onWalletDataNotFound(new Exception("Wallet data not found"));
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                sendMoneyEvents.onWalletDataNotFound(new Exception(error.getMessage()));
             }
         };
 
@@ -151,26 +168,36 @@ public class SendMoneyDalc {
                                         public void onSuccess(Void aVoid) {
                                             //compile result
                                             result1.add(debitWallet);
-                                            Query query2 = FirebaseDatabase.getInstance().getReference(DBRefrences.WALLET())
+                                            Query query2 = FirebaseDatabase.getInstance().getReference(DBReferences.WALLET())
                                                     .orderByChild("walletID")
                                                     .equalTo(creditWalletID);
                                             query2.addListenerForSingleValueEvent(onDataChangedListener2);
                                         }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            sendMoneyEvents.onSendMoneyFailed(e);
+                                        }
                                     });
+                                }else{
+                                    sendMoneyEvents.onSendMoneyFailed( new Exception("You do not have enough money left in your WALLET to complete this transaction."));
                                 }
                                 break;
                             }
                         }
                     }
+                }else{
+                    sendMoneyEvents.onWalletDataNotFound(new Exception("Wallet data not found"));
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                sendMoneyEvents.onWalletDataNotFound(new Exception(error.getMessage()));
             }
         };
         //
-        Query query = FirebaseDatabase.getInstance().getReference(DBRefrences.WALLET())
+        Query query = FirebaseDatabase.getInstance().getReference(DBReferences.WALLET())
                 .orderByChild("walletID")
                 .equalTo(debitWalletID);
         query.addListenerForSingleValueEvent(onDataChangedListener);

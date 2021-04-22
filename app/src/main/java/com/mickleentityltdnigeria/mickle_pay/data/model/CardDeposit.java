@@ -19,7 +19,6 @@ public class CardDeposit implements Serializable {
     public String cardLastSixDigit;
     public String cardType;
     public String transactionStatus;
-    public double debitAmount;
     public String creditWalletID;
     public String creditWalletCurrency;
     public double creditAmount;
@@ -27,7 +26,7 @@ public class CardDeposit implements Serializable {
     public CardDeposit() {
     }
 
-    public CardDeposit(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String transactionDesc, String transactionCurrency, String cardLastSixDigit, String cardType, String transactionStatus, double debitAmount, String creditWalletID, String creditWalletCurrency, double creditAmount) {
+    public CardDeposit(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String transactionDesc, String transactionCurrency, String cardLastSixDigit, String cardType, String transactionStatus, String creditWalletID, String creditWalletCurrency, double creditAmount) {
         this.ID = ID;
         this.timestamp = timestamp;
         this.authID = authID;
@@ -38,7 +37,6 @@ public class CardDeposit implements Serializable {
         this.cardLastSixDigit = cardLastSixDigit;
         this.cardType = cardType;
         this.transactionStatus = transactionStatus;
-        this.debitAmount = debitAmount;
         this.creditWalletID = creditWalletID;
         this.creditWalletCurrency = creditWalletCurrency;
         this.creditAmount = creditAmount;
@@ -142,16 +140,6 @@ public class CardDeposit implements Serializable {
     @Exclude
     public void setTransactionStatus(String transactionStatus) {
         this.transactionStatus = transactionStatus;
-    }
-
-    @Exclude
-    public double getDebitAmount() {
-        return debitAmount;
-    }
-
-    @Exclude
-    public void setDebitAmount(double debitAmount) {
-        this.debitAmount = debitAmount;
     }
 
     @Exclude
