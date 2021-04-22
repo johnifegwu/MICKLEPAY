@@ -86,7 +86,7 @@ public class SendMoneyDalc {
                                 //validate wallet balance.
                                 if(debitWallet.getWalletBalance() >= 0){
                                     //save wallet to the system.
-                                    walletDB.child(creditWalletID).setValue(creditWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    walletDB.child(creditWallet.getID()).setValue(creditWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             //raise event
@@ -163,7 +163,7 @@ public class SendMoneyDalc {
                                 //validate wallet balance.
                                 if(debitWallet.getWalletBalance() >= 0){
                                     //save wallet to the system.
-                                    walletDB.child(debitWalletID).setValue(debitWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    walletDB.child(debitWallet.getID()).setValue(debitWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             //compile result

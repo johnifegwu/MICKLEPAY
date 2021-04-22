@@ -9,6 +9,7 @@ public class DBReferences {
     private final static String CARD_DEPOSITS = "cardDeposits";
     private final static String CHARGE_DEFINITION = "chargeDefinitions";
     private final static String EXCHANGE_RATES = "exchangeRates";
+    private final static String MERCHANT_PAYMENTS = "merchantPayments";
 
     public static String SEND_MONEY(){
         return SEND_MONEY;
@@ -36,6 +37,10 @@ public class DBReferences {
 
     public static String EXCHANGE_RATES(){
         return EXCHANGE_RATES;
+    }
+
+    public static String MERCHANT_PAYMENTS(){
+        return MERCHANT_PAYMENTS;
     }
 
 }

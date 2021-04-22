@@ -75,7 +75,7 @@ public class CardDepositDalc {
                                 //validate creditAmount.
                                 if(cardDeposit.getCreditAmount() > 0) {
                                     //save wallet to the system.
-                                    walletDB.child(creditWalletID).setValue(creditWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    walletDB.child(creditWallet.getID()).setValue(creditWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             //raise event
