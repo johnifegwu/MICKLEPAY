@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".DefaultFragment">
+
+
+    <Button
+        android:id="@+id/btnGetQuote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/getQuote"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.332" />
+
+    <EditText
+        android:id="@+id/txtBaseCurrency"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/baseCurrency"
+        android:inputType="textPersonName"
+        android:text="@string/baseCurrency"
+        app:layout_constraintBottom_toTopOf="@+id/btnGetQuote"
+        app:layout_constraintEnd_toStartOf="@+id/txtQuoteCurrency"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtQuote" />
+
+    <EditText
+        android:id="@+id/txtQuoteCurrency"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/quoteCurrency"
+        android:inputType="textPersonName"
+        android:text="@string/quoteCurrency"
+        app:layout_constraintBottom_toTopOf="@+id/btnGetQuote"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.777"
+        app:layout_constraintStart_toEndOf="@+id/txtBaseCurrency"
+        app:layout_constraintTop_toBottomOf="@+id/txtQuote" />
+
+    <EditText
+        android:id="@+id/txtQuote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/currentRate"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

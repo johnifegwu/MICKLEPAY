@@ -1,8 +1,13 @@
 package com.mickleentityltdnigeria.mickle_pay.dalc;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnFailureListener;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -11,18 +16,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mickleentityltdnigeria.mickle_pay.dalc.events.ExchangeRateEvents;
+import com.mickleentityltdnigeria.mickle_pay.dalc.events.ExchangeResult;
 import com.mickleentityltdnigeria.mickle_pay.data.model.ExchangeRate;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Rate;
-import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
-import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
 import com.mickleentityltdnigeria.mickle_pay.util.CurrentUser;
 import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
-import com.mickleentityltdnigeria.mickle_pay.util.Types;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExchangeRateDalc {
@@ -31,30 +36,44 @@ public class ExchangeRateDalc {
     private final DatabaseReference exchangeRateDB;
 
     private final ExchangeRateEvents exchangeRateEvents;
+    private ExchangeResult exchangeResut;
 
-    public ExchangeRateDalc(ExchangeRateEvents exchangeRateEvents) {
+    public ExchangeRateDalc(ExchangeRateEvents exchangeRateEvents, Context mContext) {
         this.exchangeRateEvents = exchangeRateEvents;
         this.database = FirebaseDatabase.getInstance();
         this.exchangeRateDB = database.getReference(DBReferences.EXCHANGE_RATES());
+        AndroidNetworking.initialize(mContext);
     }
 
     public void updateCurrencies(){
         Map<String, ExchangeRate> result = new HashMap<>();
         String[] currencies = CountryDalc.getCurrencyCodes();
-        for(String c: currencies){
-            if(!result.containsKey(c)){
+        int count = currencies.length;
+        for(String baseCurrency: currencies){
+            if(!result.containsKey(baseCurrency)){
                 Map<String, Rate> rates = new HashMap<>();
-                for(String s: currencies){
-                    if(!s.equals(c)){
-                        rates.put(s, new Rate(s, getExchangeRate(c,s)));
+                exchangeResut = new ExchangeResult() {
+                    @Override
+                    public void onResultArrived(double bidPrice, String baseCurrency, String quoteCurrency) {
+                        rates.put(quoteCurrency, new Rate(quoteCurrency, bidPrice));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                };
+                for(String quoteCurrency: currencies){
+                    if(!quoteCurrency.equals(baseCurrency)){
+                            getExchangeRate(quoteCurrency,quoteCurrency, exchangeResut);
                     }
                 }
                 Timestamp ts = new Timestamp(new Date().getTime());
-                ExchangeRate exchangeRate = new ExchangeRate(ts, CurrentUser.userID, c,rates);
-                exchangeRateDB.child(c).setValue(exchangeRate).addOnSuccessListener(new OnSuccessListener<Void>() {
+                ExchangeRate exchangeRate = new ExchangeRate(ts, CurrentUser.userID, baseCurrency ,rates);
+                exchangeRateDB.child(baseCurrency).setValue(exchangeRate).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        result.put(c, exchangeRate);
+                        result.put(baseCurrency, exchangeRate);
                     }
                 });
             }
@@ -62,10 +81,34 @@ public class ExchangeRateDalc {
         }
     }
 
-    private double getExchangeRate(String fromCurrency, String toCurrency){
-        double result = 0.0;
+    public void getExchangeRate(String baseCurrency, String quoteCurrency, ExchangeResult mExchangeResult) {
+        try {
+            String rateApiURL = "https://www1.oanda.com/rates/api/v2/rates/spot.json?api_key=pU57Zp1Ib6vRcUHIXd2denbU&base=" +
+                    "{baseCurrency}&quote={quoteCurrency}";
+            AndroidNetworking.get(rateApiURL)
+                    .addPathParameter("baseCurrency", baseCurrency)
+                    .addPathParameter("quoteCurrency", quoteCurrency)
+                    .setPriority(Priority.HIGH)
+                    .build()
+                    .getAsJSONObject(new JSONObjectRequestListener() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                double bidPrice = Double.parseDouble(response.getJSONArray("quotes").getJSONObject(0).getString("bid"));
+                                mExchangeResult.onResultArrived((bidPrice * 0.97), baseCurrency, quoteCurrency);
+                            } catch (JSONException e) {
+                                mExchangeResult.onError(e);
+                            }
+                        }
 
-        return  result;
+                        @Override
+                        public void onError(ANError anError) {
+                            mExchangeResult.onError(new Exception(anError.getErrorDetail()));
+                        }
+                    });
+        }catch (Exception e){
+
+        }
     }
 
     public void getExchangeRates(){
