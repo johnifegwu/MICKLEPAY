@@ -1,6 +1,7 @@
 package com.mickleentityltdnigeria.mickle_pay.dalc;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -37,11 +38,13 @@ public class ExchangeRateDalc {
 
     private final ExchangeRateEvents exchangeRateEvents;
     private ExchangeResult exchangeResut;
+    private Context mContext;
 
     public ExchangeRateDalc(ExchangeRateEvents exchangeRateEvents, Context mContext) {
         this.exchangeRateEvents = exchangeRateEvents;
         this.database = FirebaseDatabase.getInstance();
         this.exchangeRateDB = database.getReference(DBReferences.EXCHANGE_RATES());
+        this.mContext = mContext;
         AndroidNetworking.initialize(mContext);
     }
 
@@ -63,19 +66,49 @@ public class ExchangeRateDalc {
 
                     }
                 };
+                String rateApiURL = "https://www1.oanda.com/rates/api/v2/rates/spot.json?api_key=pU57Zp1Ib6vRcUHIXd2denbU&base=" +
+                        "" + baseCurrency;
                 for(String quoteCurrency: currencies){
                     if(!quoteCurrency.equals(baseCurrency)){
-                            getExchangeRate(quoteCurrency,quoteCurrency, exchangeResut);
+                        rateApiURL += "&quote=" + quoteCurrency;
                     }
                 }
-                Timestamp ts = new Timestamp(new Date().getTime());
-                ExchangeRate exchangeRate = new ExchangeRate(ts, CurrentUser.userID, baseCurrency ,rates);
-                exchangeRateDB.child(baseCurrency).setValue(exchangeRate).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        result.put(baseCurrency, exchangeRate);
-                    }
-                });
+                //get quotes
+                try{
+                    AndroidNetworking.get(rateApiURL)
+                            .setPriority(Priority.HIGH)
+                            .build()
+                            .getAsJSONObject(new JSONObjectRequestListener() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+                                        int finalCount = response.getJSONArray("quotes").length();
+                                        for(int i = 0; i < finalCount; i++){
+                                            String quoteCurrency = response.getJSONArray("quotes").getJSONObject(i).getString("quote_currency");
+                                            double bidPrice = Double.parseDouble(response.getJSONArray("quotes").getJSONObject(i).getString("bid"));
+                                            rates.put(quoteCurrency, new Rate(quoteCurrency, bidPrice));
+                                        }
+                                        Timestamp ts = new Timestamp(new Date().getTime());
+                                        ExchangeRate exchangeRate = new ExchangeRate(ts, CurrentUser.userID, baseCurrency , rates);
+                                        exchangeRateDB.child(baseCurrency).setValue(exchangeRate).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                result.put(baseCurrency, exchangeRate);
+                                            }
+                                        });
+                                    } catch (JSONException e) {
+                                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onError(ANError anError) {
+                                    Toast.makeText(mContext, anError.getErrorDetail(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }catch (Exception e){
+                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
             exchangeRateEvents.onExchangeRatesUpdated(result);
         }
@@ -95,7 +128,7 @@ public class ExchangeRateDalc {
                         public void onResponse(JSONObject response) {
                             try {
                                 double bidPrice = Double.parseDouble(response.getJSONArray("quotes").getJSONObject(0).getString("bid"));
-                                mExchangeResult.onResultArrived((bidPrice * 0.97), baseCurrency, quoteCurrency);
+                                mExchangeResult.onResultArrived(bidPrice, baseCurrency, quoteCurrency);
                             } catch (JSONException e) {
                                 mExchangeResult.onError(e);
                             }
@@ -107,7 +140,7 @@ public class ExchangeRateDalc {
                         }
                     });
         }catch (Exception e){
-
+            mExchangeResult.onError(e);
         }
     }
 
