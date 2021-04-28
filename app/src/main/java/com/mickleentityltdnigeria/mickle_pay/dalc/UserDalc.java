@@ -12,7 +12,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mickleentityltdnigeria.mickle_pay.dalc.events.UserEvents;
 import com.mickleentityltdnigeria.mickle_pay.data.model.User;
-import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
 
 import java.util.ArrayList;

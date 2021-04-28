@@ -14,6 +14,27 @@ public class DBReferences {
     private final static String BANK_DEPOSITS = "bankDeposits";
     private final static String WITHDRAWAL_REQUEST = "withdrawalRequests";
     private final static String USERS = "users";
+    private final static String DOCUMENTS = "documents";
+    private final static String MERCHANTS = "merchants";
+    private final static String CUSTOMERS = "customers";
+    private final static String ADMIN = "admin";
+
+
+    public static String DOCUMENTS(){
+        return DOCUMENTS;
+    }
+
+    public static String MERCHANTS(){
+        return MERCHANTS;
+    }
+
+    public static String CUSTOMERS(){
+        return CUSTOMERS;
+    }
+
+    public static String ADMIN(){
+        return ADMIN;
+    }
 
     public static String SEND_MONEY(){
         return SEND_MONEY;

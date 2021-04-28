@@ -38,22 +38,22 @@ public class Types {
         return WITHDRAWAL;
     }
 
-    static class CustomerType {
+    public static class MerchantType {
 
-        private final static String CUSTOMER = "CUSTOMER";
-        private final static String MERCHANT = "MERCHANT";
+        private final static String MAIN_MERCHANT = "MAIN_MERCHANT";
+        private final static String SUB_MERCHANT = "SUB_MERCHANT";
 
-        public static String MERCHANT(){
-            return MERCHANT;
+        public static String MAIN_MERCHANT(){
+            return MAIN_MERCHANT;
         }
 
-        public static String CUSTOMER(){
-            return CUSTOMER;
+        public static String SUB_MERCHANT(){
+            return SUB_MERCHANT;
         }
 
     }
 
-    static class WalletType {
+    public static class WalletType {
 
         private final static String DEFAULT = "DEFAULT";
         private final static String OTHER = "OTHER";
@@ -163,6 +163,24 @@ public class Types {
 
         public static String SUB_MERCHANT(){
             return SUB_MERCHANT;
+        }
+
+    }
+
+    public static class ApprovalStatus{
+
+        private final static String PENDING = "PENDING";
+        private final static String NOT_APPROVED = "NOT_APPROVED";
+        private final static String APPROVED = "APPROVED";
+
+        public static String PENDING(){
+            return PENDING;
+        }
+        public static String NOT_APPROVED(){
+            return NOT_APPROVED;
+        }
+        public static String APPROVED(){
+            return APPROVED;
         }
 
     }
