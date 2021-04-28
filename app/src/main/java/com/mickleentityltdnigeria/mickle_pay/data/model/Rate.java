@@ -8,14 +8,16 @@ import java.io.Serializable;
 @IgnoreExtraProperties
 public class Rate implements Serializable {
     public String currencyCode;
-    public double exchangeRate;
+    public double bidPrice;
+    public double askPrice;
 
     public Rate() {
     }
 
-    public Rate(String currencyCode, double exchangeRate) {
+    public Rate(String currencyCode, double bidPrice, double askPrice) {
         this.currencyCode = currencyCode;
-        this.exchangeRate = exchangeRate;
+        this.bidPrice = bidPrice;
+        this.askPrice = askPrice;
     }
 
     @Exclude
@@ -29,12 +31,22 @@ public class Rate implements Serializable {
     }
 
     @Exclude
-    public double getExchangeRate() {
-        return exchangeRate;
+    public double getBidPrice() {
+        return bidPrice;
     }
 
     @Exclude
-    public void setExchangeRate(double exchangeRate) {
-        this.exchangeRate = exchangeRate;
+    public void setBidPrice(double bidPrice) {
+        this.bidPrice = bidPrice;
+    }
+
+    @Exclude
+    public double getAskPrice() {
+        return askPrice;
+    }
+
+    @Exclude
+    public void setAskPrice(double askPrice) {
+        this.askPrice = askPrice;
     }
 }

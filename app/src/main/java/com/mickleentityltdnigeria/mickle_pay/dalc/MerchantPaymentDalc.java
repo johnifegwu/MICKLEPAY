@@ -15,7 +15,6 @@ import com.mickleentityltdnigeria.mickle_pay.data.model.ChargeDefinition;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Exchange;
 import com.mickleentityltdnigeria.mickle_pay.data.model.ExchangeRate;
 import com.mickleentityltdnigeria.mickle_pay.data.model.MerchantPayment;
-import com.mickleentityltdnigeria.mickle_pay.data.model.SendMoney;
 import com.mickleentityltdnigeria.mickle_pay.data.model.TransactionCharges;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
@@ -23,7 +22,6 @@ import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
 import com.mickleentityltdnigeria.mickle_pay.util.Types;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +76,7 @@ public class MerchantPaymentDalc {
                                     isExchanged = true;
                                     exchangedValue = Exchange.calcExchangeValue(transactionCurrency, subMerchantSubTotal, subMerchantWallet.getWalletCurrency(), exchangeRates);
                                     double exchangeGained = Exchange.calcExchangeGained(transactionCurrency, subMerchantSubTotal, subMerchantWallet.getWalletCurrency(), exchangeRates);
-                                    double exchangeRate = Objects.requireNonNull(Objects.requireNonNull(exchangeRates.get(transactionCurrency)).getExchangeRates().get(subMerchantWallet.getWalletCurrency())).getExchangeRate();
+                                    double exchangeRate = Objects.requireNonNull(Objects.requireNonNull(exchangeRates.get(transactionCurrency)).getExchangeRates().get(subMerchantWallet.getWalletCurrency())).getBidPrice();
                                     //
                                     exchange.setCreditAmount(exchangedValue);
                                     exchange.setCreditWalletCurrency(subMerchantWallet.getWalletCurrency());

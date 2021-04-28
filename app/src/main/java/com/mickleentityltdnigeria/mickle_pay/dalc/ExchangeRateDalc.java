@@ -57,8 +57,8 @@ public class ExchangeRateDalc {
                 Map<String, Rate> rates = new HashMap<>();
                 exchangeResut = new ExchangeResult() {
                     @Override
-                    public void onResultArrived(double bidPrice, String baseCurrency, String quoteCurrency) {
-                        rates.put(quoteCurrency, new Rate(quoteCurrency, bidPrice));
+                    public void onResultArrived(double bidPrice, double askPrice, String baseCurrency, String quoteCurrency) {
+                        rates.put(quoteCurrency, new Rate(quoteCurrency, bidPrice, askPrice));
                     }
 
                     @Override
@@ -86,7 +86,8 @@ public class ExchangeRateDalc {
                                         for(int i = 0; i < finalCount; i++){
                                             String quoteCurrency = response.getJSONArray("quotes").getJSONObject(i).getString("quote_currency");
                                             double bidPrice = Double.parseDouble(response.getJSONArray("quotes").getJSONObject(i).getString("bid"));
-                                            rates.put(quoteCurrency, new Rate(quoteCurrency, bidPrice));
+                                            double askPrice = Double.parseDouble(response.getJSONArray("quotes").getJSONObject(i).getString("ask"));
+                                            rates.put(quoteCurrency, new Rate(quoteCurrency, bidPrice, askPrice));
                                         }
                                         Timestamp ts = new Timestamp(new Date().getTime());
                                         ExchangeRate exchangeRate = new ExchangeRate(ts, CurrentUser.userID, baseCurrency , rates);
@@ -128,7 +129,8 @@ public class ExchangeRateDalc {
                         public void onResponse(JSONObject response) {
                             try {
                                 double bidPrice = Double.parseDouble(response.getJSONArray("quotes").getJSONObject(0).getString("bid"));
-                                mExchangeResult.onResultArrived(bidPrice, baseCurrency, quoteCurrency);
+                                double askPrice = Double.parseDouble(response.getJSONArray("quotes").getJSONObject(0).getString("ask"));
+                                mExchangeResult.onResultArrived(bidPrice, askPrice, baseCurrency, quoteCurrency);
                             } catch (JSONException e) {
                                 mExchangeResult.onError(e);
                             }

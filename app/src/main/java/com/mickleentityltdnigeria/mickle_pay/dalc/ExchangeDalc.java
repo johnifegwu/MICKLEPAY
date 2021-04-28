@@ -59,7 +59,7 @@ public class ExchangeDalc {
         //get exchanged value and gains
         double exchangedValue = Exchange.calcExchangeValue(debitWallet.getWalletCurrency(), transactValue, creditWallet.getWalletCurrency(), exchangeRates);
         double exchangeGained = Exchange.calcExchangeGained(debitWallet.getWalletCurrency(), transactValue, creditWallet.getWalletCurrency(), exchangeRates);
-        double exchangeRate = Objects.requireNonNull(Objects.requireNonNull(exchangeRates.get(debitWallet.getWalletCurrency())).getExchangeRates().get(creditWallet.getWalletCurrency())).getExchangeRate();
+        double exchangeRate = Objects.requireNonNull(Objects.requireNonNull(exchangeRates.get(debitWallet.getWalletCurrency())).getExchangeRates().get(creditWallet.getWalletCurrency())).getBidPrice();
         //
         double chargeValue = 0;
         for (ChargeDefinition c : charges) {
