@@ -13,6 +13,7 @@ public class DBReferences {
     private final static String COUNTRIES = "countries";
     private final static String BANK_DEPOSITS = "bankDeposits";
     private final static String WITHDRAWAL_REQUEST = "withdrawalRequests";
+    private final static String USERS = "users";
 
     public static String SEND_MONEY(){
         return SEND_MONEY;
@@ -58,4 +59,7 @@ public class DBReferences {
         return MERCHANT_PAYMENTS;
     }
 
+    public static String USERS(){
+        return USERS;
+    }
 }
