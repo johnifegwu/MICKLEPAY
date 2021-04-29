@@ -53,6 +53,21 @@ public class Types {
 
     }
 
+    public static class CustomerType {
+
+        private final static String PERSONAL = "PERSONAL";
+        private final static String JOINT = "JOINT";
+
+        public static String PERSONAL(){
+            return PERSONAL;
+        }
+
+        public static String JOINT(){
+            return JOINT;
+        }
+
+    }
+
     public static class WalletType {
 
         private final static String DEFAULT = "DEFAULT";

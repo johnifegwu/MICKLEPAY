@@ -23,10 +23,10 @@ public class DocumentDalc {
     private FirebaseDatabase database;
     private final DatabaseReference documentDB;
 
-    private final DocumentEvents documentEvents;
+    private final DocumentEvents documentEventsListener;
 
-    public DocumentDalc(DocumentEvents documentEvents) {
-        this.documentEvents = documentEvents;
+    public DocumentDalc(DocumentEvents documentEventsListener) {
+        this.documentEventsListener = documentEventsListener;
         this.database = FirebaseDatabase.getInstance();
         this.documentDB = database.getReference(DBReferences.DOCUMENTS());
     }
@@ -40,12 +40,12 @@ public class DocumentDalc {
             public void onSuccess(Void aVoid) {
                 List<Document> result = new ArrayList<>();
                 result.add(document);
-                documentEvents.onDocumentAdded(result);
+                documentEventsListener.onDocumentAdded(result);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                documentEvents.onError(e);
+                documentEventsListener.onError(e);
             }
         });
     }
@@ -56,12 +56,12 @@ public class DocumentDalc {
             public void onSuccess(Void aVoid) {
                 List<Document> result = new ArrayList<>();
                 result.add(document);
-                documentEvents.onDocumentUpdated(result);
+                documentEventsListener.onDocumentUpdated(result);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                documentEvents.onError(e);
+                documentEventsListener.onError(e);
             }
         });
     }
@@ -70,12 +70,12 @@ public class DocumentDalc {
         documentDB.child(documentID).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                documentEvents.onDocumentDeleted(documentID);
+                documentEventsListener.onDocumentDeleted(documentID);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                documentEvents.onError(e);
+                documentEventsListener.onError(e);
             }
         });
     }
@@ -93,17 +93,17 @@ public class DocumentDalc {
                                 Document document = userSnapshot.getValue(Document.class);
                                 result.add(document);
                             }
-                            documentEvents.onDocumentsFetched(result);
+                            documentEventsListener.onDocumentsFetched(result);
                         }
                     }
                 } else {
-                    documentEvents.onDocumentNotFound(new Exception("No document found for the current user in the system."));
+                    documentEventsListener.onDocumentNotFound(new Exception("No document found for the current user in the system."));
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                documentEvents.onError(new Exception(error.getMessage()));
+                documentEventsListener.onError(new Exception(error.getMessage()));
             }
         };
         //
@@ -126,17 +126,17 @@ public class DocumentDalc {
                                 Document document = userSnapshot.getValue(Document.class);
                                 result.add(document);
                             }
-                            documentEvents.onDocumentsFetched(result);
+                            documentEventsListener.onDocumentsFetched(result);
                         }
                     }
                 } else {
-                    documentEvents.onDocumentNotFound(new Exception("No document found for the current user in the system."));
+                    documentEventsListener.onDocumentNotFound(new Exception("No document found for the current user in the system."));
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                documentEvents.onError(new Exception(error.getMessage()));
+                documentEventsListener.onError(new Exception(error.getMessage()));
             }
         };
         //

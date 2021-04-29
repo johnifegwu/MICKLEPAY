@@ -14,9 +14,11 @@ public class Merchant implements Serializable {
 
     public String merchantID;
     public Timestamp timestamp;
+    public String userID;
     public String merchantType;
     public String apiKEY;
     public String merchantName;
+    public String merchantEmail;
     public String merchantAddress;
     public String merchantCity;
     public String merchantZipCode;
@@ -31,11 +33,13 @@ public class Merchant implements Serializable {
     public Merchant() {
     }
 
-    public Merchant(String merchantID, Timestamp timestamp, String merchantType, String merchantName, String merchantAddress, String merchantCity, String merchantZipCode, String merchantState, String merchantCountry, String merchantDefaultCurrency, Map<String, PhoneLine> merchantPhoneLines, boolean isActive, String activatedBy, Timestamp timeActivated) {
+    public Merchant(String merchantID, Timestamp timestamp, String merchantType, String userID,String merchantName, String merchantEmail, String merchantAddress, String merchantCity, String merchantZipCode, String merchantState, String merchantCountry, String merchantDefaultCurrency, Map<String, PhoneLine> merchantPhoneLines, boolean isActive, String activatedBy, Timestamp timeActivated) {
         this.merchantID = merchantID;
         this.timestamp = timestamp;
         this.merchantType = merchantType;
+        this.userID = userID;
         this.merchantName = merchantName;
+        this.merchantEmail = merchantEmail;
         this.merchantAddress = merchantAddress;
         this.merchantCity = merchantCity;
         this.merchantZipCode = merchantZipCode;
@@ -99,6 +103,16 @@ public class Merchant implements Serializable {
     }
 
     @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    @Exclude
     public String getMerchantName() {
         return merchantName;
     }
@@ -106,6 +120,16 @@ public class Merchant implements Serializable {
     @Exclude
     public void setMerchantName(String merchantName) {
         this.merchantName = merchantName;
+    }
+
+    @Exclude
+    public String getMerchantEmail() {
+        return merchantEmail;
+    }
+
+    @Exclude
+    public void setMerchantEmail(String merchantEmail) {
+        this.merchantEmail = merchantEmail;
     }
 
     @Exclude
