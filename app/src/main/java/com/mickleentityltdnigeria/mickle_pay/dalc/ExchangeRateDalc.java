@@ -179,5 +179,39 @@ public class ExchangeRateDalc {
 
     }
 
+    public void getExchangeRatesByBaseCurrency(String baseCurrency){
+        Map<String, ExchangeRate> result = new HashMap<>();
+        ValueEventListener onDataChangedListener1 = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    if (snapshot.exists()) {
+                        //
+                        if (snapshot.hasChildren()) {
+                            for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                                ExchangeRate exchangeRate = userSnapshot.getValue(ExchangeRate.class);
+                                assert exchangeRate != null;
+                                result.put(exchangeRate.getCurrencyCode(), exchangeRate);
+                            }
+                            exchangeRateEvents.onExchangeRatesFetched(result);
+                        }
+                    }
+                } else {
+                    exchangeRateEvents.onExchangeRatesNotFound(new Exception("No rates available."));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                exchangeRateEvents.onExchangeRatesNotFound(new Exception(error.getMessage()));
+            }
+        };
+        Query query1 = FirebaseDatabase.getInstance().getReference(DBReferences.EXCHANGE_RATES())
+                .orderByChild("currencyCode")
+                .equalTo(baseCurrency);
+        query1.addListenerForSingleValueEvent(onDataChangedListener1);
+
+    }
+
 
 }

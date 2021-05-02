@@ -21,6 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MerchantPaymentActivity">
+            <!-- filter for making payments to merchants; accepts View action with mickle-pay, api_ey, m_wallet_id, s_wallet_id and c_wallet_id,  URI schemes -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="mickle-pay" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
