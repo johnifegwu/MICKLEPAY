@@ -44,7 +44,7 @@ public class MerchantPaymentActivity extends AppCompatActivity {
 
         try{
             /* Get the intent that started this activity
-            uri sample "mickle-pay:{merchant_id}"
+            uri sample = Uri.parse("mickle-pay:{merchant_id}");
             Intent payMerchant = new Intent(Intent.Action_View, uri);
             payMerchant.putExtra("api_key", api_key);
             payMerchant.putExtra("c_wallet_id", c_wallet_id);
@@ -64,6 +64,7 @@ public class MerchantPaymentActivity extends AppCompatActivity {
             String mType = data.getScheme();
             if(mType.equals("mickle-pay")){
 
+                String m_id = data.getSchemeSpecificPart();
                 String api_key = intent.getStringExtra("api_key");
                 String c_wallet_id = intent.getStringExtra("c_wallet_id");
                 double tran_amount = Double.parseDouble(intent.getStringExtra("tran_amount"));
@@ -151,7 +152,7 @@ public class MerchantPaymentActivity extends AppCompatActivity {
                                             public void onChargeDefinitionFetched(List<ChargeDefinition> chargeDefinitions) {
                                                 try {
                                                     //collect payment
-                                                    merchantPaymentDalc.collectPayment(customerWallet[0], merchantWallet[0], subMerchantWallet[0], tran_desc, tran_curr, tran_amount, merchant_amount, subMerchant_amount, chargeDefinitions, exchangeRates, IDGenerator.getInstance().getUUID(), "");
+                                                    merchantPaymentDalc.collectPayment(customerWallet[0], merchantWallet[0], subMerchantWallet[0], tran_desc, tran_curr, tran_amount, merchant_amount, subMerchant_amount, chargeDefinitions, exchangeRates, m_id, "");
                                                 }catch (Exception e){
                                                     Toast.makeText(MerchantPaymentActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
