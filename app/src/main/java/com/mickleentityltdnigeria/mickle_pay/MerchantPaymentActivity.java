@@ -80,7 +80,7 @@ public class MerchantPaymentActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 /* How to set the intent that started this activity
-                                uri sample = Uri.parse("mickle-pay:{merchant_id}");
+                                Uri uri = Uri.parse("mickle-pay:{merchant_id}"); // the merchant id in your app.
                                 Intent payMerchant = new Intent(Intent.Action_View, uri);
                                 payMerchant.putExtra("api_key", api_key);
                                 payMerchant.putExtra("c_wallet_id", c_wallet_id);
