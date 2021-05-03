@@ -74,10 +74,14 @@ public class ChargeDefinitionDalc {
                                 result.add(chargeDefinition);
                             }
                             chargeDefinitionEvents.onChargeDefinitionFetched(result);
+                        }else{
+                            List<ChargeDefinition> result = new ArrayList<>();
+                            chargeDefinitionEvents.onChargeDefinitionFetched(result);
                         }
                     }
                 } else {
-                    chargeDefinitionEvents.onChargeDefinitionNotFound(new Exception("No record not found"));
+                    List<ChargeDefinition> result = new ArrayList<>();
+                    chargeDefinitionEvents.onChargeDefinitionFetched(result);
                 }
             }
 
