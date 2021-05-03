@@ -109,9 +109,10 @@ public class DefaultFragment extends Fragment {
         final Button btnGetQuote = view.findViewById(R.id.btnGetQuote);
         exchangeResut = new ExchangeResult() {
             @Override
-            public void onResultArrived(double bidPrice, String baseCurrency, String quoteCurrency) {
+            public void onResultArrived(double bidPrice, double askPrice, String baseCurrency, String quoteCurrency) {
                 txtQuote.setText(String.valueOf(bidPrice));
             }
+
             @Override
             public void onError(Exception e) {
                 Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
