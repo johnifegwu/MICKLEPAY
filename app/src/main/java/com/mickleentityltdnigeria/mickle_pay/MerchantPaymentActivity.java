@@ -323,6 +323,7 @@ public class MerchantPaymentActivity extends AppCompatActivity {
                                             finish();
                                         }
                                     });
+                                    merchantDalc.getMerchantByAPIKey(api_key);
                                 } else {
                                     intent.putExtra("TransactStatus", Types.TransactStatus.FAILED());
                                     Toast.makeText(MerchantPaymentActivity.this, "Invalid request.", Toast.LENGTH_SHORT).show();
