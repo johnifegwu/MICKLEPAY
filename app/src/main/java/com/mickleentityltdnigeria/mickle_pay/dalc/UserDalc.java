@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,7 +31,7 @@ public class UserDalc {
         this.userDB = database.getReference(DBReferences.USERS());
     }
 
-    public void addUser(User user){
+    public void addUser(User user, FirebaseUser fbUser){
         ValueEventListener onDataChangedListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -45,10 +46,8 @@ public class UserDalc {
                     }
                 } else {
                    //Add new user to the system.
-                    String ID = userDB.push().getKey();
-                    user.setUserID(ID);
-                    assert ID != null;
-                    userDB.child(ID).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    user.setUserID(fbUser.getUid());
+                    userDB.child(fbUser.getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid){
                             List<User> users = new ArrayList<>();
