@@ -13,6 +13,7 @@ public class User implements Serializable {
     public String userID;
     public Timestamp timestamp;
     public String userType;
+    public String uID;
     public String userName;
     public boolean isLoggedIn;
     public String UUID;
@@ -22,10 +23,11 @@ public class User implements Serializable {
         this.setLoginExpiryTime();
     }
 
-    public User(String userID, Timestamp timestamp, String userType, String userName, boolean isLoggedIn, String UUID) {
+    public User(String userID, Timestamp timestamp, String userType, String uID,String userName, boolean isLoggedIn, String UUID) {
         this.userID = userID;
         this.timestamp = timestamp;
         this.userType = userType;
+        this.uID = uID;
         this.userName = userName;
         this.isLoggedIn = isLoggedIn;
         this.UUID = UUID;
@@ -76,6 +78,16 @@ public class User implements Serializable {
     @Exclude
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    @Exclude
+    public String getuID() {
+        return uID;
+    }
+
+    @Exclude
+    public void setuID(String uID) {
+        this.uID = uID;
     }
 
     @Exclude
