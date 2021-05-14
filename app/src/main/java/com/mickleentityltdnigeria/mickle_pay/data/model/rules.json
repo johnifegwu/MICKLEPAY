@@ -19,7 +19,10 @@
   },
     "wallets": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
-      "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+      "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "walletBalance": {
+        ".validate": "newData.val() >= 0"
+      }
     },
     "transactionCharges": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
