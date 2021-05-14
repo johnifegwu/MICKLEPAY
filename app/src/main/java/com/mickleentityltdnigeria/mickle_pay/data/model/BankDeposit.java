@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class BankDeposit implements Serializable {
 
     public String ID;
+    public String userID;
     public Timestamp timestamp;
     public String authID;
     public String customerIP;
@@ -37,8 +38,9 @@ public class BankDeposit implements Serializable {
     public BankDeposit() {
     }
 
-    public BankDeposit(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, boolean isProcessed, Timestamp dateProcessed, String processedBy, String processStatus, String creditWalletID, String creditWalletCurrency, double creditAmount, String bankAccountName, String bankAccountCurrency, String bankAccountNumber_IBAN, String bankAccountAddress, String bankName, String bankAddress, String bankSwiftCode, String intermediaryBankName, String intermediaryBankAddress, String intermediaryBankSwiftCode, String intermediaryBankAccountNumber_IBAN) {
+    public BankDeposit(String ID, String userID, Timestamp timestamp, String authID, String customerIP, String customerID, boolean isProcessed, Timestamp dateProcessed, String processedBy, String processStatus, String creditWalletID, String creditWalletCurrency, double creditAmount, String bankAccountName, String bankAccountCurrency, String bankAccountNumber_IBAN, String bankAccountAddress, String bankName, String bankAddress, String bankSwiftCode, String intermediaryBankName, String intermediaryBankAddress, String intermediaryBankSwiftCode, String intermediaryBankAccountNumber_IBAN) {
         this.ID = ID;
+        this.userID = userID;
         this.timestamp = timestamp;
         this.authID = authID;
         this.customerIP = customerIP;
@@ -72,6 +74,16 @@ public class BankDeposit implements Serializable {
     @Exclude
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Exclude

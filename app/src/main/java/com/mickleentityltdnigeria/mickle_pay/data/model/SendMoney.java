@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class SendMoney implements Serializable {
 
     public String ID;
+    public String userID;
     public Timestamp timestamp;
     public String authID;
     public String customerIP;
@@ -25,8 +26,9 @@ public class SendMoney implements Serializable {
     public SendMoney() {
     }
 
-    public SendMoney(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String transactionDesc, String debitWalletID, String debitWalletCurrency, double debitAmount, String creditWalletID, String creditWalletCurrency, double creditAmount) {
+    public SendMoney(String ID, String userID, Timestamp timestamp, String authID, String customerIP, String customerID, String transactionDesc, String debitWalletID, String debitWalletCurrency, double debitAmount, String creditWalletID, String creditWalletCurrency, double creditAmount) {
         this.ID = ID;
+        this.userID = userID;
         this.timestamp = timestamp;
         this.authID = authID;
         this.customerIP = customerIP;
@@ -48,6 +50,16 @@ public class SendMoney implements Serializable {
     @Exclude
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Exclude

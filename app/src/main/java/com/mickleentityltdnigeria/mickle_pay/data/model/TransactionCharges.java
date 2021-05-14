@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class TransactionCharges implements Serializable {
 
     public String ID;
+    public String userID;
     public Timestamp timestamp;
     public String authID;
     public String customerIP;
@@ -23,8 +24,9 @@ public class TransactionCharges implements Serializable {
     public TransactionCharges() {
     }
 
-    public TransactionCharges(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String walletID, double transactionAmount, String chargeType, double chargePercentage, double chargeValue) {
+    public TransactionCharges(String ID, String userID, Timestamp timestamp, String authID, String customerIP, String customerID, String walletID, double transactionAmount, String chargeType, double chargePercentage, double chargeValue) {
         this.ID = ID;
+        this.userID = userID;
         this.timestamp = timestamp;
         this.authID = authID;
         this.customerIP = customerIP;
@@ -44,6 +46,16 @@ public class TransactionCharges implements Serializable {
     @Exclude
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Exclude

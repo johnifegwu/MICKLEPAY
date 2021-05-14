@@ -104,7 +104,7 @@ public class BankDepositDalc {
                                                 for (ChargeDefinition c : charges) {
                                                     if(!c.isDisabled()){
                                                         Timestamp ts = new Timestamp(new Date().getTime());
-                                                        TransactionCharges tc = new TransactionCharges("", ts, bankDeposit.getAuthID(), bankDeposit.getCustomerIP(), creditWallet.getCustomerID(), creditWalletID, bankDeposit.getCreditAmount(), c.getChargeType(), c.getChargePercentage(), -(bankDeposit.getCreditAmount() * c.chargePercentage));
+                                                        TransactionCharges tc = new TransactionCharges("",CurrentUser.userID, ts, bankDeposit.getAuthID(), bankDeposit.getCustomerIP(), creditWallet.getCustomerID(), creditWalletID, bankDeposit.getCreditAmount(), c.getChargeType(), c.getChargePercentage(), -(bankDeposit.getCreditAmount() * c.chargePercentage));
                                                         String ID = transactionChargeDB.push().getKey();
                                                         tc.setID(ID);
                                                         assert ID != null;

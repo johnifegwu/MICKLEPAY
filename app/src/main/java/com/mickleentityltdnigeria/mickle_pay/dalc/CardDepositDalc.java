@@ -16,6 +16,7 @@ import com.mickleentityltdnigeria.mickle_pay.data.model.ChargeDefinition;
 import com.mickleentityltdnigeria.mickle_pay.data.model.TransactionCharges;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
+import com.mickleentityltdnigeria.mickle_pay.util.CurrentUser;
 import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
 import com.mickleentityltdnigeria.mickle_pay.util.Types;
 
@@ -88,7 +89,7 @@ public class CardDepositDalc {
                                             for (ChargeDefinition c : charges) {
                                                 if(!c.isDisabled()){
                                                 Timestamp ts = new Timestamp(new Date().getTime());
-                                                TransactionCharges tc = new TransactionCharges("", ts, cardDeposit.getAuthID(), cardDeposit.getCustomerIP(), creditWallet.getCustomerID(), creditWalletID, cardDeposit.getCreditAmount(), c.getChargeType(), c.getChargePercentage(), -(cardDeposit.getCreditAmount() * c.chargePercentage));
+                                                TransactionCharges tc = new TransactionCharges("", CurrentUser.userID, ts, cardDeposit.getAuthID(), cardDeposit.getCustomerIP(), creditWallet.getCustomerID(), creditWalletID, cardDeposit.getCreditAmount(), c.getChargeType(), c.getChargePercentage(), -(cardDeposit.getCreditAmount() * c.chargePercentage));
                                                 String ID = transactionChargeDB.push().getKey();
                                                 tc.setID(ID);
                                                 assert ID != null;

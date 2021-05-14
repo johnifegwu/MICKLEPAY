@@ -12,6 +12,7 @@ import java.util.Objects;
 public class Exchange  implements Serializable {
 
     public String ID;
+    public String userID;
     public Timestamp timestamp;
     public String authID;
     public String customerIP;
@@ -29,8 +30,9 @@ public class Exchange  implements Serializable {
     public Exchange() {
     }
 
-    public Exchange(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String exchangeDesc, String debitWalletID, String debitWalletCurrency, double debitAmount, double exchangeRate, String creditWalletID, String creditWalletCurrency, double creditAmount, double exchangeGained) {
+    public Exchange(String ID, String userID, Timestamp timestamp, String authID, String customerIP, String customerID, String exchangeDesc, String debitWalletID, String debitWalletCurrency, double debitAmount, double exchangeRate, String creditWalletID, String creditWalletCurrency, double creditAmount, double exchangeGained) {
         this.ID = ID;
+        this.userID = userID;
         this.timestamp = timestamp;
         this.authID = authID;
         this.customerIP = customerIP;
@@ -70,6 +72,16 @@ public class Exchange  implements Serializable {
     @Exclude
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Exclude

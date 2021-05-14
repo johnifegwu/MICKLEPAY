@@ -11,6 +11,7 @@ import java.util.Map;
 public class Wallet implements Serializable {
 
     public String ID;
+    public String userID;
     public Timestamp timestamp;
     public String customerID;
     public String walletID;
@@ -21,8 +22,9 @@ public class Wallet implements Serializable {
     public Wallet() {
     }
 
-    public Wallet(String ID, Timestamp timestamp, String walletID, String customerID, String walletCurrency, double walletBalance, Map<Timestamp, WalletTransactions> walletTransactions) {
+    public Wallet(String ID, String userID, Timestamp timestamp, String walletID, String customerID, String walletCurrency, double walletBalance, Map<Timestamp, WalletTransactions> walletTransactions) {
         this.ID = ID;
+        this.userID = userID;
         this.timestamp = timestamp;
         this.walletID = walletID;
         this.customerID = customerID;
@@ -39,6 +41,16 @@ public class Wallet implements Serializable {
     @Exclude
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Exclude

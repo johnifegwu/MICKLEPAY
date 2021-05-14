@@ -17,7 +17,6 @@ public class DBReferences {
     private final static String DOCUMENTS = "documents";
     private final static String MERCHANTS = "merchants";
     private final static String CUSTOMERS = "customers";
-    private final static String ADMIN = "admin";
 
 
     public static String DOCUMENTS(){
@@ -30,10 +29,6 @@ public class DBReferences {
 
     public static String CUSTOMERS(){
         return CUSTOMERS;
-    }
-
-    public static String ADMIN(){
-        return ADMIN;
     }
 
     public static String SEND_MONEY(){

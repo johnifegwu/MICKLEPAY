@@ -1,0 +1,65 @@
+{
+  "rules":{
+    "timestamp":{
+      ".validate": "newData.val() <= now()"
+    },
+    "bankDeposits": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "users": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "userType": {
+        ".validate": "(newData.val() === oldData.val()) || (newData.val() !== oldData.val() && root.child('admin').hasChild(auth.uid))"
+      }
+    },
+  "sentMonies": {
+    "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+  },
+    "wallets": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "transactionCharges": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "exchanges": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "cardDeposits": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "chargeDefinitions": {
+      "read": "auth !== null",
+      "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "exchangeRates": {
+      "read": "auth !== null",
+      "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "merchantPayments": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "countries": {
+      "read": "auth !== null",
+      "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "withdrawalRequests": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "documents": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "merchants": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    },
+    "customers": {
+      "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
+      "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+    }
+  }
+}

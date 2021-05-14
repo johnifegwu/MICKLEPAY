@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 public class Document implements Serializable {
 
     public String documentID;
+    public String userID;
     public String OwnerID;
     public Timestamp timestamp;
     public String documentType;
@@ -24,8 +25,9 @@ public class Document implements Serializable {
     public Document() {
     }
 
-    public Document(String documentID, String ownerID, Timestamp timestamp, String documentType, String documentImg, boolean canExpire, Timestamp expiresOn) {
+    public Document(String documentID, String userID, String ownerID, Timestamp timestamp, String documentType, String documentImg, boolean canExpire, Timestamp expiresOn) {
         this.documentID = documentID;
+        this.userID = userID;
         OwnerID = ownerID;
         this.timestamp = timestamp;
         this.documentType = documentType;
@@ -45,6 +47,16 @@ public class Document implements Serializable {
     @Exclude
     public void setDocumentID(String documentID) {
         this.documentID = documentID;
+    }
+
+    @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Exclude

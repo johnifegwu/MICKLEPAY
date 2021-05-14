@@ -18,6 +18,7 @@ import com.mickleentityltdnigeria.mickle_pay.data.model.MerchantPayment;
 import com.mickleentityltdnigeria.mickle_pay.data.model.TransactionCharges;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
+import com.mickleentityltdnigeria.mickle_pay.util.CurrentUser;
 import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
 import com.mickleentityltdnigeria.mickle_pay.util.Types;
 
@@ -119,7 +120,7 @@ public class MerchantPaymentDalc {
                                             for(ChargeDefinition c: charges){
                                                 if(!c.isDisabled()) {
                                                     Timestamp ts = new Timestamp(new Date().getTime());
-                                                    TransactionCharges tc = new TransactionCharges("", ts, authID, merchantIP, subMerchantWallet.getCustomerID(), subMerchantWallet.getWalletID(), finalExchangedValue, c.getChargeType(), c.getChargePercentage(), -(finalExchangedValue * c.chargePercentage));
+                                                    TransactionCharges tc = new TransactionCharges("", CurrentUser.userID, ts, authID, merchantIP, subMerchantWallet.getCustomerID(), subMerchantWallet.getWalletID(), finalExchangedValue, c.getChargeType(), c.getChargePercentage(), -(finalExchangedValue * c.chargePercentage));
                                                     String ID = transactionChargeDB.push().getKey();
                                                     tc.setID(ID);
                                                     assert ID != null;
@@ -128,7 +129,7 @@ public class MerchantPaymentDalc {
                                             }
                                             //save Merchant payment
                                             Timestamp ts = new Timestamp(new Date().getTime());
-                                            MerchantPayment merchantPayment = new MerchantPayment("",ts,authID,merchantIP,merchantWallet.getCustomerID(),transactionDesc,customerWallet.getWalletID(),customerWallet.getWalletCurrency(),transactionTotal,merchantWallet.getWalletID(),merchantWallet.getWalletCurrency(),mainMerchantSubTotal,subMerchantWallet.getWalletID(),subMerchantWallet.getWalletCurrency(), subMerchantSubTotal);
+                                            MerchantPayment merchantPayment = new MerchantPayment("", CurrentUser.userID,ts,authID,merchantIP,merchantWallet.getCustomerID(),transactionDesc,customerWallet.getWalletID(),customerWallet.getWalletCurrency(),transactionTotal,merchantWallet.getWalletID(),merchantWallet.getWalletCurrency(),mainMerchantSubTotal,subMerchantWallet.getWalletID(),subMerchantWallet.getWalletCurrency(), subMerchantSubTotal);
                                             String ID = merchantPaymentDB.push().getKey();
                                             merchantPayment.setID(ID);
                                             assert ID != null;
@@ -217,7 +218,7 @@ public class MerchantPaymentDalc {
                                             for(ChargeDefinition c: charges){
                                                 if(!c.isDisabled()) {
                                                     Timestamp ts = new Timestamp(new Date().getTime());
-                                                    TransactionCharges tc = new TransactionCharges("", ts, authID, merchantIP, merchantWallet.getCustomerID(), merchantWallet.getWalletID(), mainMerchantSubTotal, c.getChargeType(), c.getChargePercentage(), -(mainMerchantSubTotal * c.chargePercentage));
+                                                    TransactionCharges tc = new TransactionCharges("", CurrentUser.userID, ts, authID, merchantIP, merchantWallet.getCustomerID(), merchantWallet.getWalletID(), mainMerchantSubTotal, c.getChargeType(), c.getChargePercentage(), -(mainMerchantSubTotal * c.chargePercentage));
                                                     String ID = transactionChargeDB.push().getKey();
                                                     tc.setID(ID);
                                                     assert ID != null;

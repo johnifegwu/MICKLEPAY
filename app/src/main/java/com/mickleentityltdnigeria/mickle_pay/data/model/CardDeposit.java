@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class CardDeposit implements Serializable {
 
     public String ID;
+    public String userID;
     public Timestamp timestamp;
     public String authID;
     public String customerIP;
@@ -26,8 +27,9 @@ public class CardDeposit implements Serializable {
     public CardDeposit() {
     }
 
-    public CardDeposit(String ID, Timestamp timestamp, String authID, String customerIP, String customerID, String transactionDesc, String transactionCurrency, String cardLastSixDigit, String cardType, String transactionStatus, String creditWalletID, String creditWalletCurrency, double creditAmount) {
+    public CardDeposit(String ID, String userID, Timestamp timestamp, String authID, String customerIP, String customerID, String transactionDesc, String transactionCurrency, String cardLastSixDigit, String cardType, String transactionStatus, String creditWalletID, String creditWalletCurrency, double creditAmount) {
         this.ID = ID;
+        this.userID = userID;
         this.timestamp = timestamp;
         this.authID = authID;
         this.customerIP = customerIP;
@@ -50,6 +52,16 @@ public class CardDeposit implements Serializable {
     @Exclude
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    @Exclude
+    public String getUserID() {
+        return userID;
+    }
+
+    @Exclude
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Exclude

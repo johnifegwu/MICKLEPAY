@@ -16,6 +16,7 @@ import com.mickleentityltdnigeria.mickle_pay.data.model.SendMoney;
 import com.mickleentityltdnigeria.mickle_pay.data.model.TransactionCharges;
 import com.mickleentityltdnigeria.mickle_pay.data.model.Wallet;
 import com.mickleentityltdnigeria.mickle_pay.data.model.WalletTransactions;
+import com.mickleentityltdnigeria.mickle_pay.util.CurrentUser;
 import com.mickleentityltdnigeria.mickle_pay.util.DBReferences;
 import com.mickleentityltdnigeria.mickle_pay.util.Types;
 
@@ -99,7 +100,7 @@ public class SendMoneyDalc {
                                             for(ChargeDefinition c: charges){
                                                 if(!c.isDisabled()) {
                                                     Timestamp ts = new Timestamp(new Date().getTime());
-                                                    TransactionCharges tc = new TransactionCharges("", ts, authID, customerIP, creditWallet.getCustomerID(), creditWalletID, transactValue, c.getChargeType(), c.getChargePercentage(), -(transactValue * c.chargePercentage));
+                                                    TransactionCharges tc = new TransactionCharges("", CurrentUser.userID, ts, authID, customerIP, creditWallet.getCustomerID(), creditWalletID, transactValue, c.getChargeType(), c.getChargePercentage(), -(transactValue * c.chargePercentage));
                                                     String ID = transactionChargeDB.push().getKey();
                                                     tc.setID(ID);
                                                     assert ID != null;
@@ -109,7 +110,7 @@ public class SendMoneyDalc {
                                             }
                                             //save sendMoney
                                             Timestamp ts = new Timestamp(new Date().getTime());
-                                            SendMoney sendMoney = new SendMoney("",ts,authID,customerIP,debitWallet.getCustomerID(),Types.SEND_MONEY(),debitWalletID,debitWallet.getWalletCurrency(),-transactValue,creditWalletID,creditWallet.getWalletCurrency(),(transactValue - finalChargeValue));
+                                            SendMoney sendMoney = new SendMoney("", CurrentUser.userID, ts, authID,customerIP,debitWallet.getCustomerID(),Types.SEND_MONEY(),debitWalletID,debitWallet.getWalletCurrency(),-transactValue,creditWalletID,creditWallet.getWalletCurrency(),(transactValue - finalChargeValue));
                                             String ID = sendMoneyDB.push().getKey();
                                             sendMoney.setID(ID);
                                             assert ID != null;
