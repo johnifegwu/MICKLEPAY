@@ -4,34 +4,48 @@
       ".validate": "newData.val() <= now()"
     },
     "bankDeposits": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "users": {
+      "$userID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "userType": {
         ".validate": "(newData.val() === oldData.val()) || (newData.val() !== oldData.val() && root.child('admin').hasChild(auth.uid))"
       }
+     }
     },
-  "sentMonies": {
+    "sentMonies": {
+      "$ID": {
     "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
-  },
+     }
+    },
     "wallets": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "walletBalance": {
         ".validate": "newData.val() >= 0"
       }
+     }
     },
     "transactionCharges": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "exchanges": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "cardDeposits": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "chargeDefinitions": {
       "read": "auth !== null",
@@ -42,27 +56,37 @@
       "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
     },
     "merchantPayments": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "countries": {
       "read": "auth !== null",
       "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
     },
     "withdrawalRequests": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "documents": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "write": "auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "merchants": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     },
     "customers": {
+      "$ID": {
       "read": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
       "write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'"
+     }
     }
   }
 }
