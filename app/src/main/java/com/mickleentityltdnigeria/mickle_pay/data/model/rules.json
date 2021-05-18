@@ -16,7 +16,7 @@
         ".write": "auth !== null && data.child('userID').val() === auth.uid || auth !== null && root.child('users').child(auth.uid).child('userType').val() === 'ADMIN'",
         ".validate": "newData.val() != null",
         "userType": {
-          ".validate": "(newData.val() === data.child('userType').val()) || (newData.val() !== data.child('userType').val() && root.child('admin').hasChild(auth.uid))"
+          ".validate": "newData.val() === data.val() || newData.val() !== data.val() && root.child('admin').hasChild(auth.uid)"
         }
       }
     },
