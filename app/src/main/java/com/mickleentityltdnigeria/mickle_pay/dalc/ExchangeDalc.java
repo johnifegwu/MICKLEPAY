@@ -85,18 +85,21 @@ public class ExchangeDalc {
                             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                 Wallet wallet = userSnapshot.getValue(Wallet.class);
                                 assert wallet != null;
-                                creditWallet.setWalletBalance(wallet.getWalletBalance() + (exchangedValue - finalChargeValue));
+                                //creditWallet.setWalletBalance(wallet.getWalletBalance() + (exchangedValue - finalChargeValue));
                                 creditWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.EXCHANGE(), exchangedValue, Types.EXCHANGE(), authID, creditWalletID);
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.EXCHANGE(), 0, exchangedValue, new Date(), Types.EXCHANGE(), authID, creditWalletID);
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 if (finalChargeValue < 0 || finalChargeValue > 0) {
-                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_EXCHANGE(), -finalChargeValue, Types.ChargeType.CHARGE_ON_EXCHANGE(), authID, creditWalletID);
+                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_EXCHANGE(), finalChargeValue, 0, new Date(), Types.ChargeType.CHARGE_ON_EXCHANGE(), authID, creditWalletID);
                                     map.put(new Timestamp(new Date().getTime()), wallTran2);
                                 }
                                 creditWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if (debitWallet.getWalletBalance() >= 0) {
+                                double AvailableBal = 0;
+                                double UnClearedBal = 0;
+                                debitWallet.getBalance(AvailableBal, UnClearedBal);
+                                if(AvailableBal >= 0){
                                     //save wallet to the system.
                                     walletDB.child(creditWallet.getID()).setValue(creditWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -166,14 +169,17 @@ public class ExchangeDalc {
                             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                 Wallet wallet = userSnapshot.getValue(Wallet.class);
                                 assert wallet != null;
-                                debitWallet.setWalletBalance(wallet.getWalletBalance() - transactValue);
+                                //debitWallet.setWalletBalance(wallet.getWalletBalance() - transactValue);
                                 debitWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.EXCHANGE(), -transactValue, Types.EXCHANGE(), authID, creditWalletID);
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.EXCHANGE(), transactValue, 0, new Date(), Types.EXCHANGE(), authID, creditWalletID);
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 debitWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if (debitWallet.getWalletBalance() >= 0) {
+                                double AvailableBal = 0;
+                                double UnClearedBal = 0;
+                                debitWallet.getBalance(AvailableBal, UnClearedBal);
+                                if(AvailableBal >= 0){
                                     //save wallet to the system.
                                     walletDB.child(debitWallet.getID()).setValue(debitWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override

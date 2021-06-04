@@ -48,7 +48,7 @@ public class MerchantPaymentDalc {
         this.exchangeDB = database.getReference(DBReferences.EXCHANGE());
     }
 
-    public void collectPayment(Wallet customerWallet, Wallet merchantWallet, Wallet subMerchantWallet, String transactionDesc, String transactionCurrency, double transactionTotal, double mainMerchantSubTotal, double subMerchantSubTotal, List<ChargeDefinition> charges, Map<String, ExchangeRate> exchangeRates, String authID, String merchantIP) throws Exception {
+    public void collectPayment(Wallet customerWallet, Wallet merchantWallet, int merchantMoneyBackInDays, Wallet subMerchantWallet, String transactionDesc, String transactionCurrency, double transactionTotal, double mainMerchantSubTotal, double subMerchantSubTotal, List<ChargeDefinition> charges, Map<String, ExchangeRate> exchangeRates, String authID, String merchantIP) throws Exception {
         if(!customerWallet.getWalletCurrency().equals(merchantWallet.getWalletCurrency()) || !customerWallet.getWalletCurrency().equals(transactionCurrency) || !merchantWallet.getWalletCurrency().equals(transactionCurrency)){
             throw new Exception("Customer's Wallet Currency not compatible with Merchant's Wallet currency.");
         }
@@ -58,6 +58,7 @@ public class MerchantPaymentDalc {
         if(!customerWallet.getCustomerID().equals(merchantWallet.getCustomerID()) && !customerWallet.getCustomerID().equals(subMerchantWallet.getCustomerID())){
             throw new Exception("Invalid WALLET ID provided.");
         }
+        long moneyBackInMilSec = new Date().getTime() + (long)(merchantMoneyBackInDays * 86400000L);
         ValueEventListener onDataChangedListener3 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -98,18 +99,21 @@ public class MerchantPaymentDalc {
                                         chargeValue += (exchangedValue * c.getChargePercentage());
                                     }
                                 }
-                                subMerchantWallet.setWalletBalance(wallet.getWalletBalance() + (exchangedValue - chargeValue));
+                                //subMerchantWallet.setWalletBalance(wallet.getWalletBalance() + (exchangedValue - chargeValue));
                                 subMerchantWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), subMerchantWallet.getWalletID(), authID, merchantIP, subMerchantWallet.getCustomerID(), Types.MERCHANT_PAYMENT(), exchangedValue, Types.MERCHANT_PAYMENT(), authID, subMerchantWallet.getWalletID());
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), subMerchantWallet.getWalletID(), authID, merchantIP, subMerchantWallet.getCustomerID(), Types.MERCHANT_PAYMENT(), 0, exchangedValue, new Date(moneyBackInMilSec), Types.MERCHANT_PAYMENT(), authID, subMerchantWallet.getWalletID());
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 if (chargeValue < 0 || chargeValue > 0) {
-                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), subMerchantWallet.getWalletID(), authID, merchantIP, subMerchantWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_PAYMENT(), -exchangedValue, Types.ChargeType.CHARGE_ON_PAYMENT(), authID, subMerchantWallet.getWalletID());
+                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), subMerchantWallet.getWalletID(), authID, merchantIP, subMerchantWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_PAYMENT(), exchangedValue, 0, new Date(), Types.ChargeType.CHARGE_ON_PAYMENT(), authID, subMerchantWallet.getWalletID());
                                     map.put(new Timestamp(new Date().getTime()), wallTran2);
                                 }
                                 subMerchantWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if(customerWallet.getWalletBalance() >= 0){
+                                double AvailableBal = 0;
+                                double UnClearedBal = 0;
+                                customerWallet.getBalance(AvailableBal, UnClearedBal);
+                                if(AvailableBal >= 0){
                                     //save wallet to the system.
                                     double finalExchangedValue = exchangedValue;
                                     boolean finalIsExchanged = isExchanged;
@@ -198,18 +202,21 @@ public class MerchantPaymentDalc {
                                         chargeValue += (mainMerchantSubTotal * c.getChargePercentage());
                                     }
                                 }
-                                merchantWallet.setWalletBalance(wallet.getWalletBalance() + (mainMerchantSubTotal - chargeValue));
+                                //merchantWallet.setWalletBalance(wallet.getWalletBalance() + (mainMerchantSubTotal - chargeValue));
                                 merchantWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), merchantWallet.getWalletID(), authID, merchantIP, merchantWallet.getCustomerID(), Types.MERCHANT_PAYMENT(), mainMerchantSubTotal, Types.MERCHANT_PAYMENT(), authID, merchantWallet.getWalletID());
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), merchantWallet.getWalletID(), authID, merchantIP, merchantWallet.getCustomerID(), Types.MERCHANT_PAYMENT(), 0, mainMerchantSubTotal, new Date(moneyBackInMilSec), Types.MERCHANT_PAYMENT(), authID, merchantWallet.getWalletID());
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 if (chargeValue < 0 || chargeValue > 0) {
-                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), merchantWallet.getWalletID(), authID, merchantIP, merchantWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_PAYMENT(), -mainMerchantSubTotal, Types.ChargeType.CHARGE_ON_PAYMENT(), authID, merchantWallet.getWalletID());
+                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), merchantWallet.getWalletID(), authID, merchantIP, merchantWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_PAYMENT(), mainMerchantSubTotal, 0, new Date(), Types.ChargeType.CHARGE_ON_PAYMENT(), authID, merchantWallet.getWalletID());
                                     map.put(new Timestamp(new Date().getTime()), wallTran2);
                                 }
                                 merchantWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if(customerWallet.getWalletBalance() >= 0){
+                                double AvailableBal = 0;
+                                double UnClearedBal = 0;
+                                customerWallet.getBalance(AvailableBal, UnClearedBal);
+                                if(AvailableBal >= 0){
                                     //save wallet to the system.
                                     walletDB.child(merchantWallet.getID()).setValue(merchantWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -261,14 +268,17 @@ public class MerchantPaymentDalc {
                             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                 Wallet wallet = userSnapshot.getValue(Wallet.class);
                                 assert wallet != null;
-                                customerWallet.setWalletBalance(wallet.getWalletBalance() - transactionTotal);
+                                //customerWallet.setWalletBalance(wallet.getWalletBalance() - transactionTotal);
                                 customerWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), customerWallet.getWalletID(), authID, merchantIP, customerWallet.getCustomerID(), Types.MERCHANT_PAYMENT(), -transactionTotal, Types.MERCHANT_PAYMENT(), authID, merchantWallet.getWalletID());
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), customerWallet.getWalletID(), authID, merchantIP, customerWallet.getCustomerID(), Types.MERCHANT_PAYMENT(), transactionTotal, 0, new Date(), Types.MERCHANT_PAYMENT(), authID, merchantWallet.getWalletID());
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 customerWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if(customerWallet.getWalletBalance() >= 0){
+                                double AvailableBal = 0;
+                                double UnClearedBal = 0;
+                                customerWallet.getBalance(AvailableBal, UnClearedBal);
+                                if(AvailableBal >= 0){
                                     //save wallet to the system.
                                     walletDB.child(customerWallet.getID()).setValue(customerWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override

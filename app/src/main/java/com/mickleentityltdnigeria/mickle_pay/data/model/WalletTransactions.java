@@ -1,10 +1,11 @@
-package com.mickleentityltdnigeria.mickle_pay.data.model;
+ package com.mickleentityltdnigeria.mickle_pay.data.model;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @IgnoreExtraProperties
 public class WalletTransactions  implements Serializable {
@@ -15,7 +16,9 @@ public class WalletTransactions  implements Serializable {
     public String customerIP;
     public String customerID;
     public String transactDesc;
-    public double transactAmount;
+    public double debitAmount;
+    public double creditAmount;
+    public Date valueDate;
     public String transactionType;
     public String transactionID;
     public String beneficiaryWalletID; //@Nullable
@@ -23,14 +26,16 @@ public class WalletTransactions  implements Serializable {
     public WalletTransactions() {
     }
 
-    public WalletTransactions(Timestamp timestamp, String walletID, String authID, String customerIP, String customerID, String transactDesc, double transactAmount, String transactionType, String transactionID, String beneficiaryWalletID) {
+    public WalletTransactions(Timestamp timestamp, String walletID, String authID, String customerIP, String customerID, String transactDesc, double debitAmount, double creditAmount, Date valueDate, String transactionType, String transactionID, String beneficiaryWalletID) {
         this.timestamp = timestamp;
         this.walletID = walletID;
         this.authID = authID;
         this.customerIP = customerIP;
         this.customerID = customerID;
         this.transactDesc = transactDesc;
-        this.transactAmount = transactAmount;
+        this.debitAmount = debitAmount;
+        this.creditAmount = creditAmount;
+        this.valueDate = valueDate;
         this.transactionType = transactionType;
         this.transactionID = transactionID;
         this.beneficiaryWalletID = beneficiaryWalletID;
@@ -97,13 +102,30 @@ public class WalletTransactions  implements Serializable {
     }
 
     @Exclude
-    public double getTransactAmount() {
-        return transactAmount;
+    public double getDebitAmount() {
+        return debitAmount;
     }
 
     @Exclude
-    public void setTransactAmount(double transactAmount) {
-        this.transactAmount = transactAmount;
+    public void setDebitAmount(double debitAmount) {
+        this.debitAmount = debitAmount;
+    }
+
+    @Exclude
+    public double getCreditAmount() {
+        return creditAmount;
+    }
+
+    public void setCreditAmount(double creditAmount) {
+        this.creditAmount = creditAmount;
+    }
+
+    public Date getValueDate() {
+        return valueDate;
+    }
+
+    public void setValueDate(Date valueDate) {
+        this.valueDate = valueDate;
     }
 
     @Exclude

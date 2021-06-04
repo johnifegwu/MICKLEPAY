@@ -85,12 +85,12 @@ public class BankDepositDalc {
                                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                     Wallet creditWallet = userSnapshot.getValue(Wallet.class);
                                     assert creditWallet != null;
-                                    creditWallet.setWalletBalance(creditWallet.getWalletBalance() + (bankDeposit.getCreditAmount() - finalChargeValue));
+                                    //creditWallet.setWalletBalance(creditWallet.getWalletBalance() + (bankDeposit.getCreditAmount() - finalChargeValue));
                                     Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                    WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, bankDeposit.getAuthID(), bankDeposit.getCustomerIP(), creditWallet.getCustomerID(), Types.CARD_DEPOSIT(), bankDeposit.getCreditAmount(), Types.BANK_DEPOSIT(), bankDeposit.getAuthID(), creditWalletID);
+                                    WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, bankDeposit.getAuthID(), bankDeposit.getCustomerIP(), creditWallet.getCustomerID(), Types.CARD_DEPOSIT(), 0, bankDeposit.getCreditAmount(), new Date(), Types.BANK_DEPOSIT(), bankDeposit.getAuthID(), creditWalletID);
                                     map.put(new Timestamp(new Date().getTime()), wallTran);
                                     if (finalChargeValue < 0 || finalChargeValue > 0) {
-                                        WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, bankDeposit.getAuthID(), bankDeposit.getCustomerIP(), creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_DEPOSIT(), -finalChargeValue, Types.ChargeType.CHARGE_ON_DEPOSIT(), bankDeposit.getAuthID(), creditWalletID);
+                                        WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, bankDeposit.getAuthID(), bankDeposit.getCustomerIP(), creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_DEPOSIT(), finalChargeValue, 0, new Date(), Types.ChargeType.CHARGE_ON_DEPOSIT(), bankDeposit.getAuthID(), creditWalletID);
                                         map.put(new Timestamp(new Date().getTime()), wallTran2);
                                     }
                                     creditWallet.setWalletTransactions(map);

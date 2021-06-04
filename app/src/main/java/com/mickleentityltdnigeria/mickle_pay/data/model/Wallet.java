@@ -5,6 +5,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 
 @IgnoreExtraProperties
@@ -16,21 +17,31 @@ public class Wallet implements Serializable {
     public String customerID;
     public String walletID;
     public String walletCurrency;
-    public double walletBalance;
     public Map<Timestamp, WalletTransactions> walletTransactions;
 
     public Wallet() {
     }
 
-    public Wallet(String ID, String userID, Timestamp timestamp, String walletID, String customerID, String walletCurrency, double walletBalance, Map<Timestamp, WalletTransactions> walletTransactions) {
+    public Wallet(String ID, String userID, Timestamp timestamp, String walletID, String customerID, String walletCurrency, Map<Timestamp, WalletTransactions> walletTransactions) {
         this.ID = ID;
         this.userID = userID;
         this.timestamp = timestamp;
         this.walletID = walletID;
         this.customerID = customerID;
         this.walletCurrency = walletCurrency;
-        this.walletBalance = walletBalance;
         this.walletTransactions = walletTransactions;
+    }
+
+    @Exclude
+    public void getBalance(double AvailableBal, double UnClearedBal){
+        for(WalletTransactions tr: this.walletTransactions.values()){
+            if(tr.getValueDate().getTime() <= new Date().getTime()){
+                AvailableBal += tr.getCreditAmount();
+                AvailableBal -= tr.getDebitAmount();
+            }
+            UnClearedBal += tr.getCreditAmount();
+            UnClearedBal -= tr.getDebitAmount();
+        }
     }
 
     @Exclude
@@ -91,16 +102,6 @@ public class Wallet implements Serializable {
     @Exclude
     public void setWalletCurrency(String walletCurrency) {
         this.walletCurrency = walletCurrency;
-    }
-
-    @Exclude
-    public double getWalletBalance() {
-        return walletBalance;
-    }
-
-    @Exclude
-    public void setWalletBalance(double walletBalance) {
-        this.walletBalance = walletBalance;
     }
 
     @Exclude

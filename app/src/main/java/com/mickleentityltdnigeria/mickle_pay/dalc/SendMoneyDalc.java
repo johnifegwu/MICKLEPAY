@@ -78,18 +78,21 @@ public class SendMoneyDalc {
                             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                 Wallet wallet = userSnapshot.getValue(Wallet.class);
                                 assert wallet != null;
-                                creditWallet.setWalletBalance(wallet.getWalletBalance() + (transactValue - finalChargeValue));
+                                //creditWallet.setWalletBalance(wallet.getWalletBalance() + (transactValue - finalChargeValue));
                                 creditWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.INTERNAL_DEPOSIT(), transactValue, Types.INTERNAL_DEPOSIT(), authID, creditWalletID);
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.INTERNAL_DEPOSIT(), 0, transactValue, new Date(), Types.INTERNAL_DEPOSIT(), authID, creditWalletID);
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 if (finalChargeValue < 0 || finalChargeValue > 0) {
-                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_DEPOSIT(), -finalChargeValue, Types.ChargeType.CHARGE_ON_DEPOSIT(), authID, creditWalletID);
+                                    WalletTransactions wallTran2 = new WalletTransactions(new Timestamp(new Date().getTime()), creditWalletID, authID, customerIP, creditWallet.getCustomerID(), Types.ChargeType.CHARGE_ON_DEPOSIT(), finalChargeValue, 0, new Date(), Types.ChargeType.CHARGE_ON_DEPOSIT(), authID, creditWalletID);
                                     map.put(new Timestamp(new Date().getTime()), wallTran2);
                                 }
                                 creditWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if(debitWallet.getWalletBalance() >= 0){
+                                double AvailableBal = 0;
+                                double UnClearedBal = 0;
+                                debitWallet.getBalance(AvailableBal, UnClearedBal);
+                                if(AvailableBal >= 0){
                                     //save wallet to the system.
                                     walletDB.child(creditWallet.getID()).setValue(creditWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -159,14 +162,17 @@ public class SendMoneyDalc {
                             for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                                 Wallet wallet = userSnapshot.getValue(Wallet.class);
                                 assert wallet != null;
-                                debitWallet.setWalletBalance(wallet.getWalletBalance() - transactValue);
+                                //debitWallet.setWalletBalance(wallet.getWalletBalance() - transactValue);
                                 debitWallet.setWalletTransactions(wallet.getWalletTransactions());
                                 Map<Timestamp, WalletTransactions> map = new HashMap<>();
-                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.SEND_MONEY(), -transactValue, Types.SEND_MONEY(), authID, creditWalletID);
+                                WalletTransactions wallTran = new WalletTransactions(new Timestamp(new Date().getTime()), debitWalletID, authID, customerIP, debitWallet.getCustomerID(), Types.SEND_MONEY(), transactValue, 0, new Date(), Types.SEND_MONEY(), authID, creditWalletID);
                                 map.put(new Timestamp(new Date().getTime()), wallTran);
                                 debitWallet.setWalletTransactions(map);
                                 //validate wallet balance.
-                                if(debitWallet.getWalletBalance() >= 0){
+                                double AvailableBal = 0;
+                                double UnClearedBal = 0;
+                                debitWallet.getBalance(AvailableBal, UnClearedBal);
+                                if(AvailableBal >= 0){
                                     //save wallet to the system.
                                     walletDB.child(debitWallet.getID()).setValue(debitWallet).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
